@@ -1,6 +1,7 @@
 package com.moviebookingapp.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.validation.Valid;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -9,14 +10,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.MediaType;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.moviebookingapp.dto.MessageResponse;
 import com.moviebookingapp.dto.SuccessResponse;
 import com.moviebookingapp.dto.TicketDTO;
 import com.moviebookingapp.exceptions.InvalidTokenException;
 import com.moviebookingapp.exceptions.MovieNotFoundException;
+import com.moviebookingapp.exceptions.TicketAlreadyExistException;
 import com.moviebookingapp.exceptions.TicketNotFoundException;
 import com.moviebookingapp.exceptions.UnauthorizedException;
 import com.moviebookingapp.service.TicketService;
@@ -36,8 +37,7 @@ public class TicketController {
 	private TicketService ticketService;
 	private UserProfileController userProfileController;
 
-	public TicketController(TicketService ticketService, UserProfileController userProfileController,
-			ObjectMapper objectMapper) {
+	public TicketController(TicketService ticketService, UserProfileController userProfileController) {
 		this.ticketService = ticketService;
 		this.userProfileController = userProfileController;
 	}
@@ -48,30 +48,26 @@ public class TicketController {
 			@ApiResponse(responseCode = "400", description = "Ticket already Exists", content = @Content(mediaType = "application/json", schema = @Schema(implementation = MessageResponse.class))),
 			@ApiResponse(responseCode = "403", description = "Invalid token passed or token invalidated", content = @Content) })
 
-	@PostMapping("/{moviename}/add")
-	public ResponseEntity<?> bookTicket(@PathVariable("moviename") String moviename, @RequestBody TicketDTO ticketDTO,
-			@RequestHeader("Authorization") String token, @RequestHeader("Role") String role)
-			throws InvalidTokenException, UnauthorizedException {
-		log.info(ticketDTO.toString());
+	@PostMapping(value = "/{moviename}/add", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<MessageResponse> bookTicket(@PathVariable("moviename") String moviename,
+			@Valid @RequestBody TicketDTO ticketDTO, @RequestHeader("Authorization") String token,
+			@RequestHeader("Role") String role)
+			throws InvalidTokenException, UnauthorizedException, TicketAlreadyExistException {
 		if (!userProfileController.validate(token, role).getBody().isValid())
 			throw new InvalidTokenException("Invalid token passed or token invalidated");
+		log.info(ticketDTO.toString());
 
-		try {
-			return ResponseEntity.ok(ticketService.bookTicket(moviename, ticketDTO));
-		} catch (MovieNotFoundException e) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-		}
+		return ResponseEntity.ok(ticketService.bookTicket(ticketDTO));
 
 	}
-	
+
 	@Operation(summary = "This API will update the status of the tickets in the database")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "Tickets Updated Successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = SuccessResponse.class))),
 			@ApiResponse(responseCode = "400", description = "Movie not found", content = @Content(mediaType = "application/json", schema = @Schema(implementation = MessageResponse.class))),
 			@ApiResponse(responseCode = "403", description = "Invalid token passed or token invalidated", content = @Content) })
 
-
-	@PutMapping("/{moviename}/update")
+	@PutMapping(value = "/{moviename}/update", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> updateTicketStatus(@PathVariable("moviename") String moviename,
 			@RequestHeader("Authorization") String token, @RequestHeader("Role") String role)
 			throws InvalidTokenException, UnauthorizedException, TicketNotFoundException {
@@ -89,15 +85,14 @@ public class TicketController {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
 		}
 	}
-	
+
 	@Operation(summary = "This API will book tickets and add it in the database")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "Movie Deleted Successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = SuccessResponse.class))),
 			@ApiResponse(responseCode = "400", description = "Movie not found", content = @Content(mediaType = "application/json", schema = @Schema(implementation = MessageResponse.class))),
 			@ApiResponse(responseCode = "403", description = "Invalid token passed or token invalidated", content = @Content) })
 
-
-	@DeleteMapping("/{moviename}/delete")
+	@DeleteMapping(value = "/{moviename}/delete", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> deleteMovie(@PathVariable String moviename, @RequestHeader("Authorization") String token,
 			@RequestHeader("Role") String role)
 			throws InvalidTokenException, UnauthorizedException, MovieNotFoundException {

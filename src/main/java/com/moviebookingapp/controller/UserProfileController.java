@@ -103,11 +103,11 @@ public class UserProfileController {
 			@ApiResponse(responseCode = "200", description = "Password Updated Successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = MessageResponse.class))),
 			@ApiResponse(responseCode = "400", description = "Login Id does not exist", content = @Content) })
 	
-	@GetMapping("/{customerName}/forgot")
-	public ResponseEntity<MessageResponse> forgotPassword(@PathVariable String customerName,@RequestHeader("Authorization") String token,@RequestHeader("role") String role,@RequestHeader String password) throws InvalidTokenException, UnauthorizedException{
+	@GetMapping("/{userName}/forgot")
+	public ResponseEntity<MessageResponse> forgotPassword(@PathVariable String userName,@RequestHeader("Authorization") String token,@RequestHeader("role") String role,@RequestHeader String password) throws InvalidTokenException, UnauthorizedException{
 		if(!userProfileService.validate(token,role).isValid())
 			throw new InvalidTokenException("Invalid token passed");
-		return ResponseEntity.ok(userProfileService.forgotPassword(customerName, token, password));
+		return ResponseEntity.ok(userProfileService.forgotPassword(userName, token, password));
 		
 	}
 

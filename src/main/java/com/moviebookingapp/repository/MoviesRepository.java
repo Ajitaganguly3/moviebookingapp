@@ -16,6 +16,9 @@ public interface MoviesRepository extends MongoRepository<Movies, String> {
 	List<Movies> findAllByOrderByMovienameAsc();
 
 	List<Movies> findByMovienameContainingIgnoreCaseOrderByMovienameAsc(String moviename);
+	Optional<Movies> findByMoviename(String moviename);
+	//Optional<Movies> findByMovienameOrderByMovienameAsc(String moviename);
+
 	Optional<Movies> findByMovienameOrderByMovienameAsc(String moviename);
 
 }

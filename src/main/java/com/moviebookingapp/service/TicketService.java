@@ -3,18 +3,13 @@ package com.moviebookingapp.service;
 import java.util.List;
 import java.util.Optional;
 
-import javax.validation.Valid;
-
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.moviebookingapp.dto.MessageResponse;
-import com.moviebookingapp.dto.SuccessResponse;
 import com.moviebookingapp.dto.TicketDTO;
 import com.moviebookingapp.exceptions.MovieNotFoundException;
+import com.moviebookingapp.exceptions.TicketAlreadyExistException;
 import com.moviebookingapp.exceptions.TicketNotFoundException;
 import com.moviebookingapp.model.Movies;
 import com.moviebookingapp.model.Ticket;
@@ -32,32 +27,23 @@ public class TicketService {
 		this.movieRepository = moviesRepository;
 	}
 
-	public MessageResponse bookTicket(String moviename, @Valid TicketDTO ticketDTO) throws MovieNotFoundException {
-		
-		Optional<Movies> movie = movieRepository.findByMovienameOrderByMovienameAsc(moviename);
+	public MessageResponse bookTicket(TicketDTO ticketDto) throws TicketAlreadyExistException {
+
+		Optional<Movies> movie = movieRepository.findByMoviename(ticketDto.getMoviename());
 		if (movie.isEmpty()) {
-			throw new MovieNotFoundException("Movie doesn't exist with the name: " + moviename);
+			throw new TicketAlreadyExistException("Movie doesn't exist with the name: " + ticketDto.getMoviename());
 		}
-		
-		if(!moviename.equals(ticketDTO.getMoviename())) {
-			throw new MovieNotFoundException("Movie name doesn't match");
-		}
-		
-		Ticket ticket = convertToDTO(ticketDTO);
+
+		Ticket ticket = new Ticket();
+		ticket.setMoviename(ticketDto.getMoviename());
+		ticket.setTheatrename(ticketDto.getTheatrename());
+		ticket.setNoOfTickets(ticketDto.getNoOfTickets());
+		ticket.setSeatnumber(ticketDto.getSeatnumber());
+		ticket.setTicketId(ticketDto.getTicketId());
+
 		ticketRepository.save(ticket);
-		
-		//MessageResponse messageResponse = new MessageResponse("Ticket Booked Successfully", null);
-		//messageResponse.setMessage("Ticket Booked Successfully");
-//		ObjectMapper objectMapper = new ObjectMapper();
-//		String response = null;
-//		try {
-//			response = objectMapper.writeValueAsString(messageResponse);
-//		} catch (JsonProcessingException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-		
-		return new MessageResponse("Ticket Booked Successfully", HttpStatus.OK);
+
+		return new MessageResponse("Ticket booked successfully", HttpStatus.OK);
 
 	}
 
@@ -97,14 +83,15 @@ public class TicketService {
 		return tickets.stream().mapToInt(Ticket::getNoOfTickets).sum();
 	}
 
-	private Ticket convertToDTO(TicketDTO ticketDTO) {
-		Ticket ticket = new Ticket();
-		ticket.setMoviename(ticketDTO.getMoviename());
-		ticket.setTheatrename(ticketDTO.getTheatrename());
-		ticket.setNoOfTickets(ticketDTO.getNoOfTickets());
-		ticket.setSeatnumber(ticketDTO.getSeatnumber());
-
-		return ticket;
-	}
+//	private TicketDTO convertToDTO(Ticket ticket) {
+//		TicketDTO ticketDTO = new TicketDTO();
+//		ticketDTO.set_id(ticket.get_id());
+//		ticketDTO.setMoviename(ticket.getMoviename());
+//		ticketDTO.setTheatrename(ticket.getTheatrename());
+//		ticketDTO.setNoOfTickets(ticket.getNoOfTickets());
+//		ticketDTO.setSeatnumber(ticket.getSeatnumber());
+//
+//		return ticketDTO;
+//	}
 
 }
