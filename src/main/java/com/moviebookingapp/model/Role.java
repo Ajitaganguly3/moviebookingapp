@@ -7,10 +7,11 @@ import lombok.Setter;
 
 @Setter
 @AllArgsConstructor
-public class Role implements GrantedAuthority{
-	
+public class Role implements GrantedAuthority {
+
 	private static final long serialVersionUID = 1L;
 	private String role;
+
 	@Override
 	public String getAuthority() {
 		// TODO Auto-generated method stub
@@ -18,12 +19,13 @@ public class Role implements GrantedAuthority{
 	}
 
 	public Role() {
-		
+
 	}
+
 	public String getRole() {
 		return role;
 	}
-	
+
 	public void setRole(String role) {
 		this.role = role;
 	}

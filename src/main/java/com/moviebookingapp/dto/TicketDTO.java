@@ -26,4 +26,44 @@ public class TicketDTO {
 	@NotEmpty(message = "Seat number cannot be empty or null")
 	private List<String> seatnumber;
 
+	public String getTicketId() {
+		return ticketId;
+	}
+
+	public void setTicketId(String ticketId) {
+		this.ticketId = ticketId;
+	}
+
+	public String getMoviename() {
+		return moviename;
+	}
+
+	public void setMoviename(String moviename) {
+		this.moviename = moviename;
+	}
+
+	public String getTheatrename() {
+		return theatrename;
+	}
+
+	public void setTheatrename(String theatrename) {
+		this.theatrename = theatrename;
+	}
+
+	public int getNoOfTickets() {
+		return noOfTickets;
+	}
+
+	public void setNoOfTickets(int noOfTickets) {
+		this.noOfTickets = noOfTickets;
+	}
+
+	public List<String> getSeatnumber() {
+		return seatnumber;
+	}
+
+	public void setSeatnumber(List<String> seatnumber) {
+		this.seatnumber = seatnumber;
+	}
+
 }

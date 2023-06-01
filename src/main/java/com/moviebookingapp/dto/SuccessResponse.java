@@ -12,5 +12,26 @@ public class SuccessResponse {
 	private String token;
 	private HttpStatus statusCode;
 
+	public String getToken() {
+		return token;
+	}
+
+	public void setToken(String token) {
+		this.token = token;
+	}
+
+	public HttpStatus getStatusCode() {
+		return statusCode;
+	}
+
+	public void setStatusCode(HttpStatus statusCode) {
+		this.statusCode = statusCode;
+	}
+
+	public SuccessResponse(String token, HttpStatus statusCode) {
+		super();
+		this.token = token;
+		this.statusCode = statusCode;
+	}
 
 }

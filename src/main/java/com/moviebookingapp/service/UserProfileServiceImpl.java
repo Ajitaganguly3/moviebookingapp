@@ -54,8 +54,8 @@ public class UserProfileServiceImpl implements UserProfileService {
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		String methodName = "loadUserByUsername()";
-		log.info("{} invoked", methodName);
+		// String methodName = "loadUserByUsername()";
+		// log.info("{} invoked", methodName);
 		UserProfile user = userProfileRepository.findById(username).get();
 		Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
 
@@ -67,15 +67,15 @@ public class UserProfileServiceImpl implements UserProfileService {
 
 	@Override
 	public SuccessResponse login(LoginDetails loginDetails) throws LoginException {
-		String methodName = "login()";
-		log.info("{} method invoked. In Process", methodName);
+		// String methodName = "login()";
+		// log.info("{} method invoked. In Process", methodName);
 		UserDetails userDetails = loadUserByUsername(loginDetails.getLoginId());
 		if (userDetails.getPassword().equalsIgnoreCase(loginDetails.getPassword())) {
-			log.info("{} ran successfully. Token will be generated", methodName);
+			// log.info("{} ran successfully. Token will be generated", methodName);
 
 			return new SuccessResponse(jwtUtil.generateToken(userDetails), HttpStatus.OK);
 		}
-		log.info("Login failure. {} thrown exception", methodName);
+		// log.info("Login failure. {} thrown exception", methodName);
 		throw new LoginException("Login Failed Please enter correct credentials");
 	}
 
@@ -87,17 +87,18 @@ public class UserProfileServiceImpl implements UserProfileService {
 		if (existingUser.isPresent()) {
 			throw new LoginIdAlreadyExistException("login ID already taken");
 		}
-		String methodName = "register()";
-		log.info("{} invoked: ", methodName);
+		// String methodName = "register()";
+		// log.info("{} invoked: ", methodName);
 		if (!UserDetailsValidation.isPasswordValid(userDetails.getPassword())) {
-			log.info("Inside {} . Password validation failed ");
+			// log.info("Inside {} . Password validation failed ");
 			throw new InvalidPasswordException(
 					"Password should have atleast 1 lowercase, uppercase, special character");
 		}
 
 		if (!UserDetailsValidation.compareConfirmPasswordAndPasswordFields(userDetails.getPassword(),
 				userDetails.getConfirmPassword())) {
-			log.info("Inside {} . 'confirmPassword' and 'Password' validation failed ", methodName);
+			// log.info("Inside {} . 'confirmPassword' and 'Password' validation failed ",
+			// methodName);
 			throw new InvalidPasswordException("Please enter the same password in both fields");
 		}
 
@@ -115,15 +116,15 @@ public class UserProfileServiceImpl implements UserProfileService {
 	}
 
 	@Override
-	public AuthResponse validate(String token,String role) throws InvalidTokenException, UnauthorizedException {
+	public AuthResponse validate(String token, String role) throws InvalidTokenException, UnauthorizedException {
 		if (!jwtUtil.validateToken(token))
 			throw new InvalidTokenException("Invalid Token");
-		List<Role> roles = userProfileRepository.findById(jwtUtil.extractUsername(token)).get().getRoles().stream().collect(Collectors.toList());
-		if(!roles.stream().map(r -> r.getAuthority()).anyMatch(m -> m.equalsIgnoreCase(role)))
+		List<Role> roles = userProfileRepository.findById(jwtUtil.extractUsername(token)).get().getRoles().stream()
+				.collect(Collectors.toList());
+		if (!roles.stream().map(r -> r.getAuthority()).anyMatch(m -> m.equalsIgnoreCase(role)))
 			throw new UnauthorizedException("Trying to access unauthorized URL");
 		return new AuthResponse(jwtUtil.extractUsername(token), jwtUtil.validateToken(token));
 	}
-
 
 	@Override
 	public MessageResponse forgotPassword(String customerName, String token, String password) {

@@ -19,4 +19,49 @@ public class Movies implements Serializable {
 	private String theatrename;
 	private int NoOfTicketsAllotted;
 	private String status;
+
+	public String get_id() {
+		return _id;
+	}
+
+	public void set_id(String _id) {
+		this._id = _id;
+	}
+
+	public String getMoviename() {
+		return moviename;
+	}
+
+	public void setMoviename(String moviename) {
+		this.moviename = moviename;
+	}
+
+	public String getTheatrename() {
+		return theatrename;
+	}
+
+	public void setTheatrename(String theatrename) {
+		this.theatrename = theatrename;
+	}
+
+	public int getNoOfTicketsAllotted() {
+		return NoOfTicketsAllotted;
+	}
+
+	public void setNoOfTicketsAllotted(int noOfTicketsAllotted) {
+		NoOfTicketsAllotted = noOfTicketsAllotted;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+
 }
