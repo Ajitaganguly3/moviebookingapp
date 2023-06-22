@@ -2,6 +2,7 @@ package com.moviebookingapp.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,6 +30,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
+@CrossOrigin(origins =  {"http://localhost:5173","http://127.0.0.1:5173"})
 @Slf4j
 public class UserProfileController {
 
@@ -70,7 +72,7 @@ public class UserProfileController {
 	@Operation(summary = "To perform registration")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "User registered successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = MessageResponse.class))),
-			@ApiResponse(responseCode = "400", description = "login id already exist or password validation failed", content = @Content) })
+			@ApiResponse(responseCode = "400", description = "username already exist or password validation failed", content = @Content) })
 	@PostMapping("/register")
 	public ResponseEntity<MessageResponse> register(@RequestBody UserProfileDTO userDetails)
 			throws InvalidPasswordException, LoginIdAlreadyExistException {

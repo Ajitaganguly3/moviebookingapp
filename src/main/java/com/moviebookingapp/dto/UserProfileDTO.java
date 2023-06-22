@@ -25,7 +25,7 @@ public class UserProfileDTO implements Serializable{
 	@Email(message = "Email should be valid")
 	private String email;
 	@NotEmpty
-	private String loginId;
+	private String username;
 	@NotEmpty
 	private String contactNumber;
 	@Min(value = 8,message = "Password should be of length 8 atleast")

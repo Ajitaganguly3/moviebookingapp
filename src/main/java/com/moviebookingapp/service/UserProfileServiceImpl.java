@@ -62,7 +62,7 @@ public class UserProfileServiceImpl implements UserProfileService {
 		user.getRoles().forEach(role -> {
 			grantedAuthorities.add(new SimpleGrantedAuthority(role.getAuthority()));
 		});
-		return new User(user.getLoginId(), user.getPassword(), grantedAuthorities);
+		return new User(user.getUsername(), user.getPassword(), grantedAuthorities);
 	}
 
 	@Override
@@ -83,9 +83,9 @@ public class UserProfileServiceImpl implements UserProfileService {
 	public MessageResponse register(@Valid UserProfileDTO userDetails)
 			throws InvalidPasswordException, LoginIdAlreadyExistException {
 
-		Optional<UserProfile> existingUser = userProfileRepository.findById(userDetails.getLoginId());
+		Optional<UserProfile> existingUser = userProfileRepository.findById(userDetails.getUsername());
 		if (existingUser.isPresent()) {
-			throw new LoginIdAlreadyExistException("login ID already taken");
+			throw new LoginIdAlreadyExistException("username already taken");
 		}
 		String methodName = "register()";
 		log.info("{} invoked: ", methodName);
@@ -105,7 +105,7 @@ public class UserProfileServiceImpl implements UserProfileService {
 		userProfile.setFirstName(userDetails.getFirstName());
 		userProfile.setLastName(userDetails.getLastName());
 		userProfile.setEmail(userDetails.getEmail());
-		userProfile.setLoginId(userDetails.getLoginId());
+		userProfile.setUsername(userDetails.getUsername());
 		userProfile.setPassword(userDetails.getPassword());
 		userProfile.setConfirmPassword(userDetails.getConfirmPassword());
 		userProfile.setContactNumber(userDetails.getContactNumber());
@@ -129,7 +129,7 @@ public class UserProfileServiceImpl implements UserProfileService {
 	public MessageResponse forgotPassword(String customerName, String token, String password) {
 
 		UserProfile userEntity = userProfileRepository.findByFirstName(customerName).get().stream()
-				.filter(f -> f.getLoginId().equals(jwtUtil.extractUsername(token))).findFirst().get();
+				.filter(f -> f.getUsername().equals(jwtUtil.extractUsername(token))).findFirst().get();
 		userEntity.setPassword(password);
 		userProfileRepository.save(userEntity);
 		return new MessageResponse("password updated successfully", HttpStatus.OK);

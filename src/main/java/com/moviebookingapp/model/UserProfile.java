@@ -14,7 +14,7 @@ import lombok.Data;
 public class UserProfile {
 	
 	@Id
-	private String loginId;
+	private String username;
 	private String firstName;
 	private String lastName;
 	@Indexed(unique = true)

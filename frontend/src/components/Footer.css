@@ -1,0 +1,8 @@
+.footer-link {
+    color: grey;
+    transition: color 0.3s ease-in-out;
+  }
+  
+  .footer-link:hover {
+    color: white;
+  }
