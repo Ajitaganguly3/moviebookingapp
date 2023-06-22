@@ -9,7 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 public class UserDetailsValidation {
 	
 	public static boolean isPasswordValid(String password) {
-		log.info("Password validation started");
+		//log.info("Password validation started");
 		String regex = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}$";
 		if(password==null) return false;
 		else {

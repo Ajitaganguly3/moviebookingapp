@@ -23,4 +23,40 @@ public class MoviesDTO implements Serializable{
 	@NotEmpty(message = "status cannot be empty or null")
 	private String status;
 
+	public String getMoviename() {
+		return moviename;
+	}
+
+	public void setMoviename(String moviename) {
+		this.moviename = moviename;
+	}
+
+	public String getTheatrename() {
+		return theatrename;
+	}
+
+	public void setTheatrename(String theatrename) {
+		this.theatrename = theatrename;
+	}
+
+	public int getNoOfTicketsAllotted() {
+		return NoOfTicketsAllotted;
+	}
+
+	public void setNoOfTicketsAllotted(int noOfTicketsAllotted) {
+		NoOfTicketsAllotted = noOfTicketsAllotted;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+
 }

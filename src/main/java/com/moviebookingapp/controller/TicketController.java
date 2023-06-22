@@ -55,7 +55,7 @@ public class TicketController {
 			throws InvalidTokenException, UnauthorizedException, TicketAlreadyExistException {
 		if (!userProfileController.validate(token, role).getBody().isValid())
 			throw new InvalidTokenException("Invalid token passed or token invalidated");
-		log.info(ticketDTO.toString());
+		//log.info(ticketDTO.toString());
 
 		return ResponseEntity.ok(ticketService.bookTicket(ticketDTO));
 

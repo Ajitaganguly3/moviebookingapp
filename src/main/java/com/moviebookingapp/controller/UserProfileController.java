@@ -50,8 +50,8 @@ public class UserProfileController {
 			@ApiResponse(responseCode = "401", description = "Wrong credentials", content = @Content(mediaType = "application/json", schema = @Schema(implementation = MessageResponse.class))) })
 	@GetMapping("/login")
 	public ResponseEntity<SuccessResponse> login(@RequestBody LoginDetails loginDetails) throws LoginException {
-		String methodName = "login()";
-		log.info("{} is called ", methodName);
+		//String methodName = "login()";
+		//log.info("{} is called ", methodName);
 		SuccessResponse successResponse = userProfileService.login(loginDetails);
 		return ResponseEntity.ok(successResponse);
 	}
@@ -76,8 +76,8 @@ public class UserProfileController {
 	@PostMapping("/register")
 	public ResponseEntity<MessageResponse> register(@RequestBody UserProfileDTO userDetails)
 			throws InvalidPasswordException, LoginIdAlreadyExistException {
-		String methodName = "register()";
-		log.info("{} is called ", methodName);
+		//String methodName = "register()";
+		//log.info("{} is called ", methodName);
 		MessageResponse messageResponse = userProfileService.register(userDetails);
 		return ResponseEntity.ok(messageResponse);
 	}
@@ -90,8 +90,8 @@ public class UserProfileController {
 	@GetMapping("/validate")
 	public ResponseEntity<AuthResponse> validate(@RequestHeader("Authorization") String token,@RequestHeader("role") String role)
 			throws InvalidTokenException, UnauthorizedException {
-		String methodName = "validate()";
-		log.info("{} invoked: validation started", methodName);
+		//String methodName = "validate()";
+		//log.info("{} invoked: validation started", methodName);
 		return ResponseEntity.ok(userProfileService.validate(token,role));
 	}
 

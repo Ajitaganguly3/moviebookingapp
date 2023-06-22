@@ -41,7 +41,7 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
 			try {
 				username = jwtUtil.extractUsername(authToken);
 			} catch (Exception e) {
-				log.error(e.getMessage());
+				e.getMessage();
 			}
 
 		}
