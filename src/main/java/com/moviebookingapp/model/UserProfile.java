@@ -23,14 +23,6 @@ public class UserProfile {
 	private String confirmPassword;
 	private Set<Role> roles;
 
-	public String getLoginId() {
-		return loginId;
-	}
-
-	public void setLoginId(String loginId) {
-		this.loginId = loginId;
-	}
-
 	public String getFirstName() {
 		return firstName;
 	}

@@ -48,7 +48,7 @@ public class UserProfileController {
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "Login Successful and JWT Token generated", content = @Content(mediaType = "application/json", schema = @Schema(implementation = SuccessResponse.class))),
 			@ApiResponse(responseCode = "401", description = "Wrong credentials", content = @Content(mediaType = "application/json", schema = @Schema(implementation = MessageResponse.class))) })
-	@GetMapping("/login")
+	@PostMapping("/login")
 	public ResponseEntity<SuccessResponse> login(@RequestBody LoginDetails loginDetails) throws LoginException {
 		//String methodName = "login()";
 		//log.info("{} is called ", methodName);

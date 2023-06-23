@@ -1,4 +1,6 @@
 import * as React from "react";
+import {useState} from "react";
+import axios from "axios";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -52,12 +54,39 @@ const theme = createTheme({
 });
 
 export default function SignIn() {
-  const handleSubmit = (event) => {
+
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
+    
+    const payload = {
+      
+      username : username,
+      password : password,
+      
+    };
+
+    axios.post('http://localhost:9090/api/v1.0/moviebooking/login', payload)
+    .then((response) => {
+       console.log(response.data);
+       setUsername('');
+       setPassword('');
+       alert("Login Successful");
+    })
+    .catch((error) =>{
+      if(error.response){
+        console.log(error.response.data);
+        console.log(error.response.status);
+        console.log(error.response.headers);
+      } else if(error.request){
+        console.log(error.request);
+      } else{
+        console.log("Error", error.message);
+      }
+      console.error(error);
+      alert("Wrong credentials");
     });
   };
 
@@ -89,10 +118,13 @@ export default function SignIn() {
               margin="normal"
               required
               fullWidth
-              id="email"
-              label="Email Address"
-              name="email"
-              autoComplete="email"
+              id="username"
+              label="Username"
+              name="username"
+              value={username}
+              onChange={(event) => {
+                setUsername(event.target.value)
+              }}
               autoFocus
             />
             <CustomizedTextField
@@ -103,6 +135,10 @@ export default function SignIn() {
               label="Password"
               type="password"
               id="password"
+              value={password}
+              onChange={(event) => {
+                setPassword(event.target.value)
+              }}
               autoComplete="current-password"
             />
             <FormControlLabel
@@ -115,7 +151,7 @@ export default function SignIn() {
               variant="contained"
               sx={{ mt: 3, mb: 2, bgcolor: "primary.main" }}
             >
-              Sign In
+              Login
             </Button>
             <Grid container>
               <Grid item xs>

@@ -28,10 +28,6 @@ public class SuccessResponse {
 		this.statusCode = statusCode;
 	}
 
-	public SuccessResponse(String token, HttpStatus statusCode) {
-		super();
-		this.token = token;
-		this.statusCode = statusCode;
-	}
+	
 
 }

@@ -28,15 +28,7 @@ public class MessageResponse {
 		this.statusCode = statusCode;
 	}
 
-	public MessageResponse(String message, HttpStatus statusCode) {
-		super();
-		this.message = message;
-		this.statusCode = statusCode;
-	}
 
-	public MessageResponse() {
-		super();
-	}
 	
 	
 

@@ -69,7 +69,7 @@ public class UserProfileServiceImpl implements UserProfileService {
 	public SuccessResponse login(LoginDetails loginDetails) throws LoginException {
 		// String methodName = "login()";
 		// log.info("{} method invoked. In Process", methodName);
-		UserDetails userDetails = loadUserByUsername(loginDetails.getLoginId());
+		UserDetails userDetails = loadUserByUsername(loginDetails.getUsername());
 		if (userDetails.getPassword().equalsIgnoreCase(loginDetails.getPassword())) {
 			// log.info("{} ran successfully. Token will be generated", methodName);
 

@@ -30,10 +30,5 @@ public class AuthResponse {
 		this.isValid = isValid;
 	}
 
-	public AuthResponse(String username, boolean isValid) {
-		super();
-		this.username = username;
-		this.isValid = isValid;
-	}
 
 }

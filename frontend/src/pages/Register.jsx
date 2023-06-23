@@ -64,7 +64,7 @@ export default function SignUp() {
   const [contactNumber, setContactNumber] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [roles, setRoles] = useState("");
+  const [role, setRole] = useState("");
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -79,7 +79,7 @@ export default function SignUp() {
       contactNumber : contactNumber,
       password : password,
       confirmPassword : confirmPassword,
-      roles : [{roles: roles}],
+      roles : [{role: role}],
     };
 
     axios.post('http://localhost:9090/api/v1.0/moviebooking/register', payload)
@@ -92,10 +92,19 @@ export default function SignUp() {
        setContactNumber('');
        setPassword('');
        setConfirmPassword('');
-       setRoles('');
+       setRole('');
        alert("User registered successfully");
     })
     .catch((error) =>{
+      if(error.response){
+        console.log(error.response.data);
+        console.log(error.response.status);
+        console.log(error.response.headers);
+      } else if(error.request){
+        console.log(error.request);
+      } else{
+        console.log("Error", error.message);
+      }
       console.error(error);
       alert("username already exist or password validation failed");
     });
@@ -246,9 +255,9 @@ export default function SignUp() {
                     color: "#cb0d0d",
                   },
                 }}>
-                <InputLabel id="role-label" sx={{ color: "black" }}></InputLabel>
-                <Select labelId="role-label" id="role" value={roles} name="role" label="Role" required sx={{ color: "black" }} onChange={(event) => {
-                    setRoles(event.target.value)
+                <InputLabel id="role-label" sx={{ color: "black" }}>Role</InputLabel>
+                <Select labelId="role-label" id="role" value={role} name="role" label="Role" required sx={{ color: "black" }} onChange={(event) => {
+                    setRole(event.target.value)
                   }}>
                   <MenuItem value="User" sx={{ color: "black" }}>User</MenuItem>
                   <MenuItem value="Admin" sx={{ color: "black" }}>Admin</MenuItem>

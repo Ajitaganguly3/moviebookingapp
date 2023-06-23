@@ -58,14 +58,6 @@ public class UserProfileDTO implements Serializable{
 		this.email = email;
 	}
 
-	public String getLoginId() {
-		return loginId;
-	}
-
-	public void setLoginId(String loginId) {
-		this.loginId = loginId;
-	}
-
 	public String getContactNumber() {
 		return contactNumber;
 	}
