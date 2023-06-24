@@ -1,5 +1,6 @@
 import * as React from "react";
 import {useState} from "react";
+import {useNavigate} from "react-router-dom";
 import axios from "axios";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
@@ -54,6 +55,8 @@ const theme = createTheme({
   },
 });
 
+
+
 // const BASE_URL = "http://localhost:9090/api/v1.0/moviebooking/"
 
 export default function SignUp() {
@@ -65,6 +68,8 @@ export default function SignUp() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [role, setRole] = useState("");
+
+  const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -93,7 +98,9 @@ export default function SignUp() {
        setPassword('');
        setConfirmPassword('');
        setRole('');
-       alert("User registered successfully");
+      //  alert("User registered successfully");
+
+       navigate("/login");
     })
     .catch((error) =>{
       if(error.response){

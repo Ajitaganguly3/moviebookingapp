@@ -65,19 +65,19 @@ public class UserProfileServiceImpl implements UserProfileService {
 		return new User(user.getUsername(), user.getPassword(), grantedAuthorities);
 	}
 
-	@Override
-	public SuccessResponse login(LoginDetails loginDetails) throws LoginException {
-		// String methodName = "login()";
-		// log.info("{} method invoked. In Process", methodName);
-		UserDetails userDetails = loadUserByUsername(loginDetails.getUsername());
-		if (userDetails.getPassword().equalsIgnoreCase(loginDetails.getPassword())) {
-			// log.info("{} ran successfully. Token will be generated", methodName);
-
-			return new SuccessResponse(jwtUtil.generateToken(userDetails), HttpStatus.OK);
-		}
-		// log.info("Login failure. {} thrown exception", methodName);
-		throw new LoginException("Login Failed Please enter correct credentials");
-	}
+//	@Override
+//	public SuccessResponse login(LoginDetails loginDetails) throws LoginException {
+//		// String methodName = "login()";
+//		// log.info("{} method invoked. In Process", methodName);
+//		UserDetails userDetails = loadUserByUsername(loginDetails.getUsername());
+//		if (userDetails.getPassword().equalsIgnoreCase(loginDetails.getPassword())) {
+//			// log.info("{} ran successfully. Token will be generated", methodName);
+//
+//			return new SuccessResponse(jwtUtil.generateToken(userDetails), HttpStatus.OK);
+//		}
+//		// log.info("Login failure. {} thrown exception", methodName);
+//		throw new LoginException("Login Failed Please enter correct credentials");
+//	}
 
 	@Override
 	public MessageResponse register(@Valid UserProfileDTO userDetails)
@@ -116,14 +116,18 @@ public class UserProfileServiceImpl implements UserProfileService {
 	}
 
 	@Override
-	public AuthResponse validate(String token, String role) throws InvalidTokenException, UnauthorizedException {
-		if (!jwtUtil.validateToken(token))
+	public AuthResponse validate(SuccessResponse successResponse) throws InvalidTokenException, UnauthorizedException {
+		Set<Role> roles = userProfileRepository.findById(successResponse.getUsername()).get().getRoles();
+
+		if (!successResponse.getRole().stream()
+				.anyMatch(r -> roles.stream().anyMatch(t -> r.equalsIgnoreCase(t.getAuthority())))) {
+			throw new InvalidTokenException("user is not authorized to access");
+		}
+		if (!jwtUtil.validateToken(successResponse.getToken()))
 			throw new InvalidTokenException("Invalid Token");
-		List<Role> roles = userProfileRepository.findById(jwtUtil.extractUsername(token)).get().getRoles().stream()
-				.collect(Collectors.toList());
-		if (!roles.stream().map(r -> r.getAuthority()).anyMatch(m -> m.equalsIgnoreCase(role)))
-			throw new UnauthorizedException("Trying to access unauthorized URL");
-		return new AuthResponse(jwtUtil.extractUsername(token), jwtUtil.validateToken(token));
+		return new AuthResponse(jwtUtil.extractUsername(successResponse.getToken()),
+				jwtUtil.validateToken(successResponse.getToken()));
+
 	}
 
 	@Override

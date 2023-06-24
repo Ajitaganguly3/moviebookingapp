@@ -50,12 +50,11 @@ public class TicketController {
 
 	@PostMapping(value = "/{moviename}/add", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<MessageResponse> bookTicket(@PathVariable("moviename") String moviename,
-			@Valid @RequestBody TicketDTO ticketDTO, @RequestHeader("Authorization") String token,
-			@RequestHeader("Role") String role)
+			@Valid @RequestBody TicketDTO ticketDTO, @RequestHeader("Authorization") SuccessResponse successResponse)
 			throws InvalidTokenException, UnauthorizedException, TicketAlreadyExistException {
-		if (!userProfileController.validate(token, role).getBody().isValid())
+		if (!userProfileController.validate(successResponse).getBody().isValid())
 			throw new InvalidTokenException("Invalid token passed or token invalidated");
-		//log.info(ticketDTO.toString());
+		// log.info(ticketDTO.toString());
 
 		return ResponseEntity.ok(ticketService.bookTicket(ticketDTO));
 
@@ -69,13 +68,13 @@ public class TicketController {
 
 	@PutMapping(value = "/{moviename}/update", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> updateTicketStatus(@PathVariable("moviename") String moviename,
-			@RequestHeader("Authorization") String token, @RequestHeader("Role") String role)
+			@RequestHeader("Authorization") SuccessResponse successResponse)
 			throws InvalidTokenException, UnauthorizedException, TicketNotFoundException {
 
-		if (!userProfileController.validate(token, role).getBody().isValid())
+		if (!userProfileController.validate(successResponse).getBody().isValid())
 			throw new InvalidTokenException("Invalid token passed or token invalidated");
 
-		if (!role.equals("Admin")) {
+		if (!successResponse.getRole().stream().anyMatch(r -> r.equalsIgnoreCase("admin"))) {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 		}
 
@@ -93,14 +92,14 @@ public class TicketController {
 			@ApiResponse(responseCode = "403", description = "Invalid token passed or token invalidated", content = @Content) })
 
 	@DeleteMapping(value = "/{moviename}/delete", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<?> deleteMovie(@PathVariable String moviename, @RequestHeader("Authorization") String token,
-			@RequestHeader("Role") String role)
+	public ResponseEntity<?> deleteMovie(@PathVariable String moviename,
+			@RequestHeader("Authorization") SuccessResponse successResponse)
 			throws InvalidTokenException, UnauthorizedException, MovieNotFoundException {
 
-		if (!userProfileController.validate(token, role).getBody().isValid())
+		if (!userProfileController.validate(successResponse).getBody().isValid())
 			throw new InvalidTokenException("Invalid token passed or token invalidated");
 
-		if (!role.equals("Admin")) {
+		if (!successResponse.getRole().stream().anyMatch(r -> r.equalsIgnoreCase("admin"))) {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 		}
 

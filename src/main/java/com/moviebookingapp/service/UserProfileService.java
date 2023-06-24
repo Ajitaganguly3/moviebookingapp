@@ -15,12 +15,12 @@ import com.moviebookingapp.model.LoginDetails;
 
 public interface UserProfileService extends UserDetailsService {
 
-	public SuccessResponse login(LoginDetails loginDetails) throws LoginException;
+//	public SuccessResponse login(LoginDetails loginDetails) throws LoginException;
 
 	public MessageResponse register(UserProfileDTO userDetails)
 			throws InvalidPasswordException, LoginIdAlreadyExistException;
 
-	public AuthResponse validate(String token, String role) throws InvalidTokenException, UnauthorizedException;
+	public AuthResponse validate(SuccessResponse successResponse) throws InvalidTokenException, UnauthorizedException;
 
 	public MessageResponse forgotPassword(String customerName, String token, String password);
 

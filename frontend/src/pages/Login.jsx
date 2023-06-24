@@ -1,5 +1,6 @@
 import * as React from "react";
 import {useState} from "react";
+import {useNavigate} from "react-router-dom";
 import axios from "axios";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
@@ -53,10 +54,14 @@ const theme = createTheme({
   },
 });
 
+
+
 export default function SignIn() {
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+
+  const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -73,7 +78,9 @@ export default function SignIn() {
        console.log(response.data);
        setUsername('');
        setPassword('');
-       alert("Login Successful");
+      //  alert("Login Successful");
+
+       navigate("/");
     })
     .catch((error) =>{
       if(error.response){

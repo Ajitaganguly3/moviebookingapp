@@ -1,32 +1,22 @@
 package com.moviebookingapp.dto;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class SuccessResponse {
 
 	private String token;
-	private HttpStatus statusCode;
+	private List<String> role;
+	private String username;
 
-	public String getToken() {
-		return token;
-	}
-
-	public void setToken(String token) {
-		this.token = token;
-	}
-
-	public HttpStatus getStatusCode() {
-		return statusCode;
-	}
-
-	public void setStatusCode(HttpStatus statusCode) {
-		this.statusCode = statusCode;
-	}
 
 	
 
