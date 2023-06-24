@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -15,6 +15,7 @@ export default function NavBar() {
   const [searchOptions, setSearchOptions] = useState([]);
   const [searchResults, setSearchResults] = useState([]);
   const navigate = useNavigate();
+  const [userRole, setUserRole] = useState("");
 
   const toggleNav = (event) => {
     setNavOpen(event.currentTarget);
@@ -23,6 +24,11 @@ export default function NavBar() {
   const closeNav = () => {
     setNavOpen(null);
   };
+
+  useEffect(() => {
+    const role = localStorage.getItem("role");
+    setUserRole(role);
+  }, []);
 
   const handleSearch = (event, value) => {
     if (value) {
@@ -46,6 +52,95 @@ export default function NavBar() {
       const movieId = selectedMovie.id;
       navigate(`/movies/${movieId}/bookTickets`);
     }
+  };
+
+  // const menuItems = [
+  //   {
+  //     role: "Admin",
+  //     items: [
+  //       {
+  //         text: "Logout",
+  //         to: "/register",
+  //       },
+  //       {
+  //         text: "Add Movie",
+  //         to: "/addMovie",
+  //       },
+  //       {
+  //         text: "Delete Movie",
+  //         to: "/deleteMovie",
+  //       },
+  //     ],
+  //   },
+  //   {
+  //     role: "User",
+  //     items: [
+  //       {
+  //         text: "Profile",
+  //         to: "/",
+  //       },
+  //       {
+  //         text: "Movies",
+  //         to: "/movies",
+  //       },
+  //     ],
+  //   },
+  // ];
+
+  // const getMenuItems = (role) => {
+  //   const menuItemConfig = menuItems.find((item) => item.role === role);
+  //   if(menuItemConfig){
+  //     return menuItemConfig.items.map((item, index) => (
+  //       <MenuItem 
+  //         key={index}
+  //         component={Link}
+  //         to={item.to}
+  //         sx={{
+  //           width: "80px",
+  //           bgcolor: "white",
+  //           ":hover": {color: "#cb0d0d"},
+  //         }}
+  //       >
+  //         {item.text}
+  //       </MenuItem>
+  //     ));
+  //   }
+  //   return null;
+  // };
+
+  const menuItems = {
+    "Admin": [
+      {
+        text: "Logout",
+        to: "/register",
+      },
+      {
+        text: "Movies",
+        to: "/movies",
+      },
+      {
+        text: "Add Movie",
+        to: "/addMovie",
+      },
+      {
+        text: "Delete Movie",
+        to: "/deleteMovie",
+      },
+    ],
+    "User": [
+      {
+        text: "Logout",
+        to: "/register",
+      },
+      {
+        text: "Profile",
+        to: "/",
+      },
+      {
+        text: "Movies",
+        to: "/movies",
+      },
+    ],
   };
 
   return (
@@ -139,70 +234,29 @@ export default function NavBar() {
           >
             Register
           </Button>
+          <Menu
+            anchorEl={navOpen}
+            open={Boolean(navOpen)}
+            onClose={closeNav}
+            onClick={closeNav}
+          >
+            {menuItems[userRole]?.map((item, index) => (
+              <MenuItem 
+                key={index}
+                component={Link}
+                to={item.to}
+                sx={{
+                  width: "120px",
+                  bgcolor: "white",
+                  ":hover": {color: "#cb0d0d"},
+                }}
+              >
+              {item.text}
+              </MenuItem>
+            ))}
+          </Menu>
         </Toolbar>
       </AppBar>
-      <Menu
-        anchorEl={navOpen}
-        open={Boolean(navOpen)}
-        onClose={closeNav}
-        onClick={closeNav}
-      >
-        <MenuItem
-          component={Link}
-          to="/login"
-          sx={{
-            width: "80px",
-            bgcolor: "white",
-            ":hover": { color: "#cb0d0d" },
-          }}
-        >
-          Login
-        </MenuItem>
-        <MenuItem
-          component={Link}
-          to="/"
-          sx={{
-            width: "80px",
-            bgcolor: "white",
-            ":hover": { color: "#cb0d0d" },
-          }}
-        >
-          Profile
-        </MenuItem>
-        <MenuItem
-          component={Link}
-          to="/movies"
-          sx={{
-            width: "80px",
-            bgcolor: "white",
-            ":hover": { color: "#cb0d0d" },
-          }}
-        >
-          Movies
-        </MenuItem>
-        <MenuItem
-          component={Link}
-          to="/addMovie"
-          sx={{
-            width: "80px",
-            bgcolor: "white",
-            ":hover": { color: "#cb0d0d" },
-          }}
-        >
-          Add Movie
-        </MenuItem>
-        <MenuItem
-          component={Link}
-          to="/deleteMovie"
-          sx={{
-            width: "120px",
-            bgcolor: "white",
-            ":hover": { color: "#cb0d0d" },
-          }}
-        >
-          Delete Movie
-        </MenuItem>
-      </Menu>
     </Box>
   );
 }

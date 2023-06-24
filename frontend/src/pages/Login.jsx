@@ -79,7 +79,7 @@ export default function SignIn() {
        setUsername('');
        setPassword('');
       //  alert("Login Successful");
-
+      localStorage.setItem("role", response.data.role[0]);
        navigate("/");
     })
     .catch((error) =>{
