@@ -3,11 +3,15 @@ package com.moviebookingapp.service;
 import java.util.List;
 import java.util.Optional;
 
+import javax.validation.Valid;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.moviebookingapp.dto.MessageResponse;
 import com.moviebookingapp.dto.TicketDTO;
+import com.moviebookingapp.exceptions.MovieAlreadyExistsException;
 import com.moviebookingapp.exceptions.MovieNotFoundException;
 import com.moviebookingapp.exceptions.TicketAlreadyExistException;
 import com.moviebookingapp.exceptions.TicketNotFoundException;
@@ -22,29 +26,53 @@ public class TicketService {
 	private TicketRepository ticketRepository;
 	private MoviesRepository movieRepository;
 
+	@Autowired
 	public TicketService(TicketRepository ticketRepository, MoviesRepository moviesRepository) {
 		this.ticketRepository = ticketRepository;
 		this.movieRepository = moviesRepository;
 	}
 
-	public MessageResponse bookTicket(TicketDTO ticketDto) throws TicketAlreadyExistException {
+//	public MessageResponse bookTicket(@Valid TicketDTO ticketDto) throws TicketAlreadyExistException {
+//
+//		Optional<Movies> movie = movieRepository.findByMoviename(ticketDto.getMoviename());
+//		if (!movie.isPresent()) {
+//			throw new TicketAlreadyExistException("Movie doesn't exist with the name: " + ticketDto.getMoviename());
+//		}
+//
+//		Ticket ticket = new Ticket();
+//		ticket.setMoviename(ticketDto.getMoviename());
+//		ticket.setTheatrename(ticketDto.getTheatrename());
+//		ticket.setNoOfTickets(ticketDto.getNoOfTickets());
+//		ticket.setSeatnumber(ticketDto.getSeatnumber());
+//		ticket.setTicketId(ticketDto.getTicketId());
+//
+//		ticketRepository.save(ticket);
+//
+//		return new MessageResponse("Ticket booked successfully", HttpStatus.OK);
+//
+//	}
 
-		Optional<Movies> movie = movieRepository.findByMoviename(ticketDto.getMoviename());
-		if (movie.isEmpty()) {
-			throw new TicketAlreadyExistException("Movie doesn't exist with the name: " + ticketDto.getMoviename());
+	public Ticket bookTicket(String moviename, int noOfTickets, List<String> seatNumber)
+			throws MovieAlreadyExistsException {
+		Optional<Movies> optionalMovie = movieRepository.findByMoviename(moviename);
+		Movies movie = optionalMovie.orElseThrow(() -> new MovieAlreadyExistsException("Movie already exists"));
+
+		if (movie.getNoOfTicketsAllotted() < noOfTickets) {
+			throw new RuntimeException("Not enough ticets available");
 		}
 
 		Ticket ticket = new Ticket();
-		ticket.setMoviename(ticketDto.getMoviename());
-		ticket.setTheatrename(ticketDto.getTheatrename());
-		ticket.setNoOfTickets(ticketDto.getNoOfTickets());
-		ticket.setSeatnumber(ticketDto.getSeatnumber());
-		ticket.setTicketId(ticketDto.getTicketId());
+		ticket.setMoviename(moviename);
+		ticket.setTheatrename(movie.getTheatrename());
+		ticket.setNoOfTickets(noOfTickets);
+		ticket.setSeatnumber(seatNumber);
 
-		ticketRepository.save(ticket);
+		movie.setNoOfTicketsAllotted(movie.getNoOfTicketsAllotted() - noOfTickets);
+		movieRepository.save(movie);
 
-		return new MessageResponse("Ticket booked successfully", HttpStatus.OK);
+		ticket = ticketRepository.save(ticket);
 
+		return ticket;
 	}
 
 	public MessageResponse updateTicketStatus(String moviename) throws TicketNotFoundException, MovieNotFoundException {

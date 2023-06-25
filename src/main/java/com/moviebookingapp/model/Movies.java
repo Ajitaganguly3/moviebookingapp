@@ -16,9 +16,14 @@ public class Movies implements Serializable {
 	private static final long serialVersionUID = -4188335777590705816L;
 	private String _id;
 	private String moviename;
+	private String genre;
+	private String releaseDate;
 	private String theatrename;
+	private String price;
 	private int NoOfTicketsAllotted;
 	private String status;
+	private String about;
+	private String posterURL;
 
 	public String get_id() {
 		return _id;

@@ -7,6 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -14,7 +16,9 @@ import com.moviebookingapp.dto.MessageResponse;
 import com.moviebookingapp.dto.MoviesDTO;
 import com.moviebookingapp.dto.SuccessResponse;
 import com.moviebookingapp.exceptions.InvalidTokenException;
+import com.moviebookingapp.exceptions.MovieAlreadyExistsException;
 import com.moviebookingapp.exceptions.UnauthorizedException;
+import com.moviebookingapp.model.Movies;
 import com.moviebookingapp.service.MovieService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -74,9 +78,23 @@ public class MoviesController {
 		return ResponseEntity.ok(movies);
 	}
 
-//	@PostMapping("/add")
-//	public Movies addMovie(@RequestBody MoviesDTO movieDto) {
-//		return movieService.addMovie(movieDto);
-//	}
+	@Operation(summary = "To add movie details ")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "Movies added successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = MessageResponse.class))),
+			@ApiResponse(responseCode = "404", description = "Movie already exists", content = @Content(mediaType = "application/json", schema = @Schema(implementation = MessageResponse.class))),
+			@ApiResponse(responseCode = "403", description = "Invalid token passed or token invalidated", content = @Content) })
+
+	@PostMapping("/add")
+	public ResponseEntity<?> addMovie(@RequestBody MoviesDTO movieDto,
+			@RequestHeader("Authorization") SuccessResponse successResponse)
+			throws InvalidTokenException, UnauthorizedException {
+
+		if (!successResponse.getRole().stream().anyMatch(r -> r.equalsIgnoreCase("admin"))) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+		}
+		MessageResponse messageResponse = movieService.addMovie(movieDto);
+
+		return ResponseEntity.ok(messageResponse);
+	}
 
 }

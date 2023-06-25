@@ -1,29 +1,42 @@
 package com.moviebookingapp.dto;
 
+import java.io.Serializable;
 import java.util.List;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 import org.springframework.stereotype.Component;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Data;
 
 @Component
 @Data
-public class TicketDTO {
+public class TicketDTO implements Serializable {
 
-	@NotBlank
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2786752437721636754L;
+	@NotEmpty
+	@JsonProperty("ticketId")
 	private String ticketId;
 	@NotEmpty(message = "Movie name cannot be empty or null")
+	@JsonProperty("moviename")
 	private String moviename;
 	@NotEmpty(message = "Theatre name cannot be empty or null")
+	@JsonProperty("theatrename")
 	private String theatrename;
-	@NotBlank
-	@Min(value = 0)
+	@NotNull(message = "No. of tickets cannot be null")
+	@Min(value = 0, message = "*No. of tickets cannot be negative")
+	@JsonProperty("noOfTickets")
 	private int noOfTickets;
 	@NotEmpty(message = "Seat number cannot be empty or null")
+	@JsonProperty("seatnumber")
 	private List<String> seatnumber;
 
 	public String getTicketId() {
