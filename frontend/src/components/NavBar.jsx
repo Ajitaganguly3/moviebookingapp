@@ -126,6 +126,10 @@ export default function NavBar() {
         text: "Delete Movie",
         to: "/deleteMovie",
       },
+      {
+        text: "Book Tickets",
+        to: "/bookTickets",
+      },
     ],
     "User": [
       {
@@ -139,6 +143,10 @@ export default function NavBar() {
       {
         text: "Movies",
         to: "/movies",
+      },
+      {
+        text: "Book Tickets",
+        to: "/bookTickets",
       },
     ],
   };

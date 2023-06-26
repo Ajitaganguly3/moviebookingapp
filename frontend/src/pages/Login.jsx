@@ -73,13 +73,14 @@ export default function SignIn() {
       
     };
 
-    axios.post('http://localhost:9090/api/v1.0/moviebooking/login', payload)
+    axios.post('http://localhost:9090/api/v1.0/moviebooking/login',  payload)
     .then((response) => {
        console.log(response.data);
        setUsername('');
        setPassword('');
       //  alert("Login Successful");
       localStorage.setItem("role", response.data.role[0]);
+      localStorage.setItem("successResponse", response.data);
        navigate("/");
     })
     .catch((error) =>{
