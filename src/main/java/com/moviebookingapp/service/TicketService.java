@@ -94,17 +94,8 @@ public class TicketService {
 		return new MessageResponse("Tickets Updated Successfully", HttpStatus.OK);
 	}
 
-	public MessageResponse deleteMovie(String moviename) throws MovieNotFoundException {
-
-		Optional<Movies> movie = movieRepository.findByMovienameOrderByMovienameAsc(moviename);
-		if (movie.isPresent()) {
-			movieRepository.delete(movie.get());
-		} else {
-			throw new MovieNotFoundException("Movie not found with the name: " + moviename);
-		}
-		return new MessageResponse("Movie Deleted Successfully", HttpStatus.OK);
-
-	}
+	
+	
 
 	private int getBookedTicketCount(String moviename) {
 		List<Ticket> tickets = ticketRepository.findByMovieName(moviename);

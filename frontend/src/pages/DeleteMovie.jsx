@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import {useNavigate} from "react-router-dom";
+import TextField from "@mui/material/TextField";
+import { useNavigate } from "react-router-dom";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
@@ -25,53 +26,105 @@ const theme = createTheme({
 });
 
 const DeleteMoviePage = () => {
-  const [selectedMovie, setSelectedMovie] = useState("");
-  const [movies, setMovies] = useState([]);
-  const successResponse = localStorage.getItem('successResponse');
+  // const [selectedMovie, setSelectedMovie] = useState("");
+  // const [movies, setMovies] = useState([]);
+  const [moviename, setMoviename] = useState("");
+  const [message, setMessage] = useState("");
+  const successResponse = localStorage.getItem("successResponse");
 
-  const handleMovieChange = (event) => {
-    setSelectedMovie(event.target.value);
-  };
+  // useEffect(() => {
+  //   fetchMovies();
+  // }, []);
+
+  // const fetchMovies = async () => {
+  //   try{
+  //     const response = await axios.get("http://localhost:9090/api/v1.0/moviebooking/all", {
+  //       headers: {
+  //         Authorization: successResponse,
+  //       },
+  //     });
+  //     setMovies(response.data);
+  //     console.log(response.data);
+  //   } catch(error){
+  //     console.error("Error fetching movies: ", error);
+  //   }
+  // };
+
+  // const handleMovieChange = (event) => {
+  //   setMoviename(event.target.value);
+  // };
 
   const handleDeleteMovie = async () => {
+    // console.log(selectedMovie);
+    console.log(successResponse);
 
-    
-
-    axios.delete("http://localhost:9090/api/v1.0/moviebooking/{selectedMovie}/delete", {
-      headers: {
-        Authorization: successResponse,
-      },
-    })
-    .then((response) => {
-      const updatedMovies = movies.filter((movie) => movie.id !== selectedMovie);
-      setMovies(updatedMovies);
-      setSelectedMovie("");
-    })
-    .catch((error) => {
-      console.error("Movie deletion failed: ", error);
-    });    
-  };
-
-  useEffect(() => {
-    const fetchMovies = async () => {
-      try{
-        const response = await fetch("http://localhost:9090/api/v1.0/moviebooking/all", {
+    await axios
+      .delete(
+        "http://localhost:9090/api/v1.0/moviebooking/Elemental/delete",
+        {
           headers: {
             Authorization: successResponse,
           },
-        });
-        if(response.ok){
-          const data = await response.json();
-          setMovies(data);
-        } else{
-          console.error("Failed to fetch movies: ", response.status);
         }
-      } catch(error){
-        console.error("Failed to fetch: ", error);
-      }
-    };
-    fetchMovies();
-  }, []);
+      )
+      .then((response) => {
+        setMessage(response.data.message);
+        console.log(message);
+      })
+  
+      .catch((error) => {
+        if (error.response) {
+          console.log(error.response.data);
+          console.log(error.response.status);
+          console.log(error.response.headers);
+        } else if (error.request) {
+          console.log(error.request);
+        } else {
+          console.log("Error", error.message);
+        }
+        console.error(error);
+      });
+
+    // if(!selectedMovie){
+    //   console.error("No movie selected");
+    //   return;
+    // }
+    //  console.log(successResponse);
+    // axios.delete("http://localhost:9090/api/v1.0/moviebooking/{selectedMovie}/delete", {
+    //   headers: {
+    //     Authorization: successResponse,
+    //   },
+    // })
+    // .then((response) => {
+    //   const updatedMovies = movies.filter((movie) => movie.moviename !== selectedMovie);
+    //   setMovies(updatedMovies);
+    //   setSelectedMovie("");
+    // })
+    // .catch((error) => {
+    //   console.error("Movie deletion failed: ", error);
+    // });
+  };
+
+  // useEffect(() => {
+  //   const fetchMovies = async () => {
+  //     try{
+  //       const response = await fetch("http://localhost:9090/api/v1.0/moviebooking/all", {
+  //         headers: {
+  //           Authorization: successResponse,
+  //         },
+  //       });
+  //       if(response.ok){
+  //         const data = await response.json();
+  //         setMovies(data);
+  //       } else{
+  //         console.error("Failed to fetch movies: ", response.status);
+  //       }
+  //     } catch(error){
+  //       console.error("Failed to fetch: ", error);
+  //     }
+  //   };
+  //   fetchMovies();
+  // }, []);
 
   return (
     <ThemeProvider theme={theme}>
@@ -79,7 +132,60 @@ const DeleteMoviePage = () => {
         <Typography component="h1" variant="h5" sx={{ color: "white", mt: 8 }}>
           Delete Movie
         </Typography>
-        <FormControl fullWidth sx={{ mt: 3, color: "white" }}>
+        <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <TextField
+                required
+                fullWidth
+                id="moviename"
+                label="Movie Name"
+                name="moviename"
+                value={moviename}
+                onChange={(e) => setMoviename(e.target.value)}
+                InputLabelProps={{ style: { color: "#ffffff" } }}
+                InputProps={{
+                  style: { color: "#ffffff" },
+                  classes: {
+                    root: {
+                      "& .MuiOutlinedInput-root": {
+                        "& fieldset": {
+                          borderColor: "#cb0d0d",
+                        },
+                        "&:hover fieldset": {
+                          borderColor: "#ffffff",
+                        },
+                      },
+                    },
+                  },
+                }}
+              />
+            </Grid>
+          </Grid>
+
+        <Button
+          onClick={handleDeleteMovie}
+          fullWidth
+          color="inherit"
+          sx={{ mt: 3, mb: 2, color: "white", bgcolor: "#cb0d0d" }}
+          disabled={!moviename}
+        >
+          Delete Movie
+        </Button>
+        {message && (
+          <Typography variant="body1" color="error">
+            {" "}
+            {message}
+          </Typography>
+        )}
+      </Container>
+    </ThemeProvider>
+  );
+};
+
+export default DeleteMoviePage;
+
+{
+  /* <FormControl fullWidth sx={{ mt: 3, color: "red" }}>
           <Select
             value={selectedMovie}
             onChange={handleMovieChange}
@@ -104,24 +210,12 @@ const DeleteMoviePage = () => {
             <MenuItem value="" disabled>
               Select Movie
             </MenuItem>
-            
-              <MenuItem key={movies} value={movies.moviename}>
-                {movies.moviename}
-              </MenuItem>
+            {movies.map((movie) => (
+              <MenuItem key={movie.moviename} value={movie.moviename}>
+              {movie.moviename}
+            </MenuItem>
+            ))}
+              
           </Select>
-        </FormControl>
-        <Button
-          onClick={handleDeleteMovie}
-          fullWidth
-          color="inherit"
-          sx={{ mt: 3, mb: 2, color: "white", bgcolor: "#cb0d0d" }}
-          disabled={!selectedMovie}
-        >
-          Delete Movie
-        </Button>
-      </Container>
-    </ThemeProvider>
-  );
-};
-
-export default DeleteMoviePage;
+        </FormControl> */
+}

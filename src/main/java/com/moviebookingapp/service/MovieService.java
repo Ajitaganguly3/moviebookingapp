@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import com.moviebookingapp.dto.MessageResponse;
 import com.moviebookingapp.dto.MoviesDTO;
 import com.moviebookingapp.exceptions.MovieAlreadyExistsException;
+import com.moviebookingapp.exceptions.MovieNotFoundException;
 import com.moviebookingapp.model.Movies;
 import com.moviebookingapp.repository.MoviesRepository;
 
@@ -59,6 +60,18 @@ public class MovieService {
 		moviesRepository.save(movies);
 
 		return new MessageResponse("Movies added successfully", HttpStatus.OK);
+	}
+	
+	public MessageResponse deleteMovie(String moviename) throws MovieNotFoundException {
+
+		Optional<Movies> movie = moviesRepository.findByMoviename(moviename);
+		if (movie.isPresent()) {
+			moviesRepository.delete(movie.get());
+		} else {
+			throw new MovieNotFoundException("Movie not found with the name: " + moviename);
+		}
+		return new MessageResponse("Movie Deleted Successfully", HttpStatus.OK);
+
 	}
 
 	private List<MoviesDTO> convertToDTOList(List<Movies> movies) {

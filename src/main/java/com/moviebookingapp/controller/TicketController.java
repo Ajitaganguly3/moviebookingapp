@@ -103,25 +103,6 @@ public class TicketController {
 		}
 	}
 
-	@Operation(summary = "This API will book tickets and add it in the database")
-	@ApiResponses(value = {
-			@ApiResponse(responseCode = "200", description = "Movie Deleted Successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = SuccessResponse.class))),
-			@ApiResponse(responseCode = "400", description = "Movie not found", content = @Content(mediaType = "application/json", schema = @Schema(implementation = MessageResponse.class))),
-			@ApiResponse(responseCode = "403", description = "Invalid token passed or token invalidated", content = @Content) })
-
-	@DeleteMapping(value = "/{moviename}/delete", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<?> deleteMovie(@PathVariable String moviename,
-			@RequestHeader("Authorization") SuccessResponse successResponse)
-			throws InvalidTokenException, UnauthorizedException, MovieNotFoundException {
-
-		if (!userProfileController.validate(successResponse).getBody().isValid())
-			throw new InvalidTokenException("Invalid token passed or token invalidated");
-
-		if (!successResponse.getRole().stream().anyMatch(r -> r.equalsIgnoreCase("admin"))) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-		}
-
-		return ResponseEntity.ok(ticketService.deleteMovie(moviename));
-	}
+	
 
 }
