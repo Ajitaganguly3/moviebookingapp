@@ -80,7 +80,9 @@ export default function SignIn() {
        setPassword('');
       //  alert("Login Successful");
       localStorage.setItem("role", response.data.role[0]);
-      localStorage.setItem("successResponse", response.data);
+      localStorage.setItem("successResponse", JSON.stringify(response.data));
+      const successResponse = localStorage.getItem("successResponse");
+      console.log(successResponse);
        navigate("/");
     })
     .catch((error) =>{

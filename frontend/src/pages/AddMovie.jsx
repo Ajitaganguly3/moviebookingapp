@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import {useNavigate} from "react-router-dom";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
@@ -31,7 +32,10 @@ const AddMovie = () => {
   const [status, setStatus] = useState("");
   const [about, setAbout] = useState("");
   const [posterUrl, setPosterUrl] = useState("");
-  const successResponse = localStorage.getItem('successResponse');
+
+  const navigate = useNavigate();
+
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -50,15 +54,18 @@ const AddMovie = () => {
       posterURL: posterUrl,
       
     };
+    const successResponse = localStorage.getItem('successResponse');
     try {
       const response = await axios.post(
         "http://localhost:9090/api/v1.0/moviebooking/add", payload,
-          {headers: {
-            Authorization: successResponse,
+          {
+            headers: {
+              Authorization: successResponse,
           },
         }
         
       );
+      navigate("/");
       console.log("Movie addedd sucessfully: ", response.data);
       setTitle("");
       setGenre("");
@@ -252,6 +259,33 @@ const AddMovie = () => {
                 name="posterUrl"
                 value={posterUrl}
                 onChange={(e) => setPosterUrl(e.target.value)}
+                InputLabelProps={{ style: { color: "#ffffff" } }}
+                InputProps={{
+                  style: { color: "#ffffff" },
+                  classes: {
+                    root: {
+                      "& .MuiOutlinedInput-root": {
+                        "& fieldset": {
+                          borderColor: "#cb0d0d",
+                        },
+                        "&:hover fieldset": {
+                          borderColor: "#ffffff",
+                        },
+                      },
+                    },
+                  },
+                }}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                required
+                fullWidth
+                id="status"
+                label="Status"
+                name="status"
+                value={status}
+                onChange={(e) => setStatus(e.target.value)}
                 InputLabelProps={{ style: { color: "#ffffff" } }}
                 InputProps={{
                   style: { color: "#ffffff" },

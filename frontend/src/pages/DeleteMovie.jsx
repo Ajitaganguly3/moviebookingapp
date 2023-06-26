@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import {useNavigate} from "react-router-dom";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
@@ -24,24 +26,57 @@ const theme = createTheme({
 
 const DeleteMoviePage = () => {
   const [selectedMovie, setSelectedMovie] = useState("");
-  const [movies, setMovies] = useState(moviesData);
+  const [movies, setMovies] = useState([]);
+  const successResponse = localStorage.getItem('successResponse');
 
   const handleMovieChange = (event) => {
     setSelectedMovie(event.target.value);
   };
 
-  const handleDeleteMovie = () => {
-    const updatedMovies = movies.filter((movie) => movie.id !== selectedMovie);
+  const handleDeleteMovie = async () => {
 
-    setMovies(updatedMovies);
+    
 
-    setSelectedMovie("");
+    axios.delete("http://localhost:9090/api/v1.0/moviebooking/{selectedMovie}/delete", {
+      headers: {
+        Authorization: successResponse,
+      },
+    })
+    .then((response) => {
+      const updatedMovies = movies.filter((movie) => movie.id !== selectedMovie);
+      setMovies(updatedMovies);
+      setSelectedMovie("");
+    })
+    .catch((error) => {
+      console.error("Movie deletion failed: ", error);
+    });    
   };
+
+  useEffect(() => {
+    const fetchMovies = async () => {
+      try{
+        const response = await fetch("http://localhost:9090/api/v1.0/moviebooking/all", {
+          headers: {
+            Authorization: successResponse,
+          },
+        });
+        if(response.ok){
+          const data = await response.json();
+          setMovies(data);
+        } else{
+          console.error("Failed to fetch movies: ", response.status);
+        }
+      } catch(error){
+        console.error("Failed to fetch: ", error);
+      }
+    };
+    fetchMovies();
+  }, []);
 
   return (
     <ThemeProvider theme={theme}>
       <Container component="main" maxWidth="xs">
-        <Typography component="h1" variant="h5" sx={{ color: "white", mt: 5 }}>
+        <Typography component="h1" variant="h5" sx={{ color: "white", mt: 8 }}>
           Delete Movie
         </Typography>
         <FormControl fullWidth sx={{ mt: 3, color: "white" }}>
@@ -69,11 +104,10 @@ const DeleteMoviePage = () => {
             <MenuItem value="" disabled>
               Select Movie
             </MenuItem>
-            {movies.map((movie) => (
-              <MenuItem key={movie.id} value={movie.id}>
-                {movie.title}
+            
+              <MenuItem key={movies} value={movies.moviename}>
+                {movies.moviename}
               </MenuItem>
-            ))}
           </Select>
         </FormControl>
         <Button
