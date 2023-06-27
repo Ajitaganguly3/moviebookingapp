@@ -12,7 +12,7 @@ import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
 
 // Import the movie data from MovieData.jsx
-import { moviesData } from "../components/MovieData";
+// import { moviesData } from "../components/MovieData";
 
 const theme = createTheme({
   palette: {
@@ -26,29 +26,29 @@ const theme = createTheme({
 });
 
 const DeleteMoviePage = () => {
-  // const [selectedMovie, setSelectedMovie] = useState("");
-  // const [movies, setMovies] = useState([]);
+  const [selectedMovie, setSelectedMovie] = useState("");
+  const [movies, setMovies] = useState([]);
   const [moviename, setMoviename] = useState("");
   const [message, setMessage] = useState("");
   const successResponse = localStorage.getItem("successResponse");
 
-  // useEffect(() => {
-  //   fetchMovies();
-  // }, []);
+  useEffect(() => {
+    fetchMovies();
+  }, []);
 
-  // const fetchMovies = async () => {
-  //   try{
-  //     const response = await axios.get("http://localhost:9090/api/v1.0/moviebooking/all", {
-  //       headers: {
-  //         Authorization: successResponse,
-  //       },
-  //     });
-  //     setMovies(response.data);
-  //     console.log(response.data);
-  //   } catch(error){
-  //     console.error("Error fetching movies: ", error);
-  //   }
-  // };
+  const fetchMovies = async () => {
+    try{
+      const response = await axios.get("http://localhost:9090/api/v1.0/moviebooking/all", {
+        headers: {
+          Authorization: successResponse,
+        },
+      });
+      setMovies(response.data);
+      console.log(response.data);
+    } catch(error){
+      console.error("Error fetching movies: ", error);
+    }
+  };
 
   // const handleMovieChange = (event) => {
   //   setMoviename(event.target.value);
@@ -60,7 +60,7 @@ const DeleteMoviePage = () => {
 
     await axios
       .delete(
-        "http://localhost:9090/api/v1.0/moviebooking/Elemental/delete",
+        `http://localhost:9090/api/v1.0/moviebooking/${moviename}/delete`,
         {
           headers: {
             Authorization: successResponse,
@@ -85,46 +85,10 @@ const DeleteMoviePage = () => {
         console.error(error);
       });
 
-    // if(!selectedMovie){
-    //   console.error("No movie selected");
-    //   return;
-    // }
-    //  console.log(successResponse);
-    // axios.delete("http://localhost:9090/api/v1.0/moviebooking/{selectedMovie}/delete", {
-    //   headers: {
-    //     Authorization: successResponse,
-    //   },
-    // })
-    // .then((response) => {
-    //   const updatedMovies = movies.filter((movie) => movie.moviename !== selectedMovie);
-    //   setMovies(updatedMovies);
-    //   setSelectedMovie("");
-    // })
-    // .catch((error) => {
-    //   console.error("Movie deletion failed: ", error);
-    // });
+
   };
 
-  // useEffect(() => {
-  //   const fetchMovies = async () => {
-  //     try{
-  //       const response = await fetch("http://localhost:9090/api/v1.0/moviebooking/all", {
-  //         headers: {
-  //           Authorization: successResponse,
-  //         },
-  //       });
-  //       if(response.ok){
-  //         const data = await response.json();
-  //         setMovies(data);
-  //       } else{
-  //         console.error("Failed to fetch movies: ", response.status);
-  //       }
-  //     } catch(error){
-  //       console.error("Failed to fetch: ", error);
-  //     }
-  //   };
-  //   fetchMovies();
-  // }, []);
+  
 
   return (
     <ThemeProvider theme={theme}>

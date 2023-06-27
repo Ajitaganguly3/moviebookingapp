@@ -66,16 +66,16 @@ public class TicketController {
 //	}
 
 	@PostMapping(value = "/{moviename}/book", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Ticket> bookTicket(@PathVariable("moviename") String moviename,
+	public ResponseEntity<?> bookTicket(@PathVariable("moviename") String moviename,
 			@Valid @RequestBody TicketDTO ticketDTO, @RequestHeader("Authorization") SuccessResponse successResponse)
-			throws MovieAlreadyExistsException, InvalidTokenException, UnauthorizedException {
+			throws MovieAlreadyExistsException, InvalidTokenException, UnauthorizedException, MovieNotFoundException {
 
 		if (!userProfileController.validate(successResponse).getBody().isValid())
 			throw new InvalidTokenException("Invalid token passed or token invalidated");
 		log.info(ticketDTO.toString());
 
-		Ticket ticket = ticketService.bookTicket(moviename, ticketDTO.getNoOfTickets(), ticketDTO.getSeatnumber());
-		return ResponseEntity.ok(ticket);
+//		Ticket ticket = ticketService.bookTicket(moviename, ticketDTO.getNoOfTickets(), ticketDTO.getSeatnumber());
+		return ResponseEntity.ok(ticketService.bookTicket(moviename, ticketDTO.getNoOfTickets(), ticketDTO.getSeatnumber()));
 	}
 
 	@Operation(summary = "This API will update the status of the tickets in the database")
