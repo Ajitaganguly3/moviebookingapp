@@ -1,40 +1,19 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Box, Grid, Typography } from "@mui/material";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
-// import { moviesData } from "../components/MovieData";
+import { moviesData } from "../components/MovieData";
 
 const Home = () => {
   const [selectedMovie, setSelectedMovie] = useState(null);
-  const [moviesData, setMoviesData] = useState([]);
-  const successResponse = localStorage.getItem("successResponse");
-
-  useEffect(() => {
-    fetchMoviesData();
-  }, []);
-
-  const fetchMoviesData = async () => {
-    try{
-          const response = await axios.get("http://localhost:9090/api/v1.0/moviebooking/all", {
-            headers: {
-              Authorization: successResponse,
-            },
-          });
-          setMoviesData(response.data);
-          console.log(response.data);
-      }catch(error){
-            console.error("Error fetching movies: ", error);
-          }
-  };
 
   const handleMovieSelection = (movie) => {
     setSelectedMovie(movie);
   };
 
   return (
-    <Box sx={{ p: 2, mt: 8, mb: 8,}}>
+    <Box sx={{ p: 2, mt: 8, mb: 8 }}>
       <Carousel
         showThumbs={false}
         autoPlay={true}
@@ -45,13 +24,13 @@ const Home = () => {
         showArrows={false}
       >
         {moviesData
-        .filter((movie) => movie.moviename.charAt(0) === "T" || movie.moviename.charAt(0) === "F")
+        .filter((movie) => movie.title.charAt(0) === "T")
         .slice(0, 3).map((movie) => (
           <div key={movie.id} style={{ position: "relative" }}>
             <Link to={`/movies/${movie.id}`}>
               <img
-                src={movie.posterURL}
-                alt={movie.moviename}
+                src={movie.posterUrl}
+                alt={movie.title}
                 style={{
                   width: "100%",
                   height: "auto",
@@ -82,23 +61,21 @@ const Home = () => {
         ))}
       </Carousel>
 
-      <Typography variant="h4" gutterBottom mt={8} sx = {{color: "#9d9d9d"}}>
+      <Typography variant="h4" gutterBottom mt={8}>
         Recommended Movies
       </Typography>
-      <Grid container spacing={2} sx={{ mt: 6 }}>
-        {moviesData
-        .sort((a, b) => new Date(b.releaseDate) - new Date(a.releaseDate))
-        .map((movie) => (
+      <Grid container spacing={2} sx={{ mt: 4 }}>
+        {moviesData.map((movie) => (
           <Grid item key={movie.id} xs={12} sm={6} md={4} lg={3}>
-            <Link to={`/movies/${movie.moviename}/bookTickets`}>
+            <Link to={`/movies/${movie.id}/bookTickets`}>
               <img
-                src={movie.posterURL}
-                alt={movie.moviename}
+                src={movie.posterUrl}
+                alt={movie.title}
                 style={{ width: "100%", height: "auto" }}
                 onClick={() => handleMovieSelection(movie)}
               />
             </Link>
-            <Typography variant="subtitle1"  sx = {{color: "#9d9d9d"}}>{movie.moviename}</Typography>
+            <Typography variant="subtitle1">{movie.title}</Typography>
             <Typography variant="caption" sx={{ color: "#777" }}>
               {movie.genre}
             </Typography>

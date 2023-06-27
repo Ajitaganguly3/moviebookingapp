@@ -65,7 +65,7 @@ const AddMovie = () => {
         }
         
       );
-      navigate("/");
+      navigate("/home");
       console.log("Movie addedd sucessfully: ", response.data);
       setTitle("");
       setGenre("");

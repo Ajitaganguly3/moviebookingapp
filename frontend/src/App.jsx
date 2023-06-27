@@ -7,6 +7,7 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
 import Home from "./pages/Home";
+import HomeDef from "./pages/HomeDef";
 import Footer from "./components/Footer";
 import Movies from "./pages/Movies";
 import BookTickets from "./pages/BookTickets";
@@ -18,11 +19,12 @@ const App = () => {
     <Router>
       <NavBar />
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/home" element={<Home />} />
+        <Route path= "/" element={<HomeDef />} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="/movies" element={<Movies />} />
-        <Route path="/movies/:id/bookTickets" element={<BookTickets />} />
+        <Route path="/movies/:moviename/bookTickets" element={<BookTickets />} />
         <Route path="/bookTickets" element={<BookTickets />} />
         <Route path="/addMovie" element={<AddMovie />} />
         <Route path="/deleteMovie" element={<DeleteMovie />} />

@@ -14,8 +14,9 @@ export default function NavBar() {
   const [navOpen, setNavOpen] = useState(null);
   const [searchOptions, setSearchOptions] = useState([]);
   const [searchResults, setSearchResults] = useState([]);
-  const navigate = useNavigate();
   const [userRole, setUserRole] = useState("");
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const navigate = useNavigate();
 
   const toggleNav = (event) => {
     setNavOpen(event.currentTarget);
@@ -27,6 +28,7 @@ export default function NavBar() {
 
   useEffect(() => {
     const role = localStorage.getItem("role");
+    setIsLoggedIn(true);
     setUserRole(role);
   }, []);
 
@@ -54,101 +56,11 @@ export default function NavBar() {
     }
   };
 
-  // const menuItems = [
-  //   {
-  //     role: "Admin",
-  //     items: [
-  //       {
-  //         text: "Logout",
-  //         to: "/register",
-  //       },
-  //       {
-  //         text: "Add Movie",
-  //         to: "/addMovie",
-  //       },
-  //       {
-  //         text: "Delete Movie",
-  //         to: "/deleteMovie",
-  //       },
-  //     ],
-  //   },
-  //   {
-  //     role: "User",
-  //     items: [
-  //       {
-  //         text: "Profile",
-  //         to: "/",
-  //       },
-  //       {
-  //         text: "Movies",
-  //         to: "/movies",
-  //       },
-  //     ],
-  //   },
-  // ];
-
-  // const getMenuItems = (role) => {
-  //   const menuItemConfig = menuItems.find((item) => item.role === role);
-  //   if(menuItemConfig){
-  //     return menuItemConfig.items.map((item, index) => (
-  //       <MenuItem 
-  //         key={index}
-  //         component={Link}
-  //         to={item.to}
-  //         sx={{
-  //           width: "80px",
-  //           bgcolor: "white",
-  //           ":hover": {color: "#cb0d0d"},
-  //         }}
-  //       >
-  //         {item.text}
-  //       </MenuItem>
-  //     ));
-  //   }
-  //   return null;
-  // };
-
-  const menuItems = {
-    "Admin": [
-      {
-        text: "Logout",
-        to: "/register",
-      },
-      {
-        text: "Movies",
-        to: "/movies",
-      },
-      {
-        text: "Add Movie",
-        to: "/addMovie",
-      },
-      {
-        text: "Delete Movie",
-        to: "/deleteMovie",
-      },
-      {
-        text: "Book Tickets",
-        to: "/bookTickets",
-      },
-    ],
-    "User": [
-      {
-        text: "Logout",
-        to: "/register",
-      },
-      {
-        text: "Profile",
-        to: "/",
-      },
-      {
-        text: "Movies",
-        to: "/movies",
-      },
-      {
-        text: "Book Tickets",
-        to: "/bookTickets",
-      },
-    ],
+  const handleLogout = () => {
+    localStorage.removeItem("role");
+    setIsLoggedIn(false);
+    setUserRole("");
+    navigate("/login");
   };
 
   return (
@@ -172,7 +84,10 @@ export default function NavBar() {
             >
               <MenuIcon />
             </IconButton>
-            <Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
+            <Link
+              to="/home"
+              style={{ textDecoration: "none", color: "inherit" }}
+            >
               <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                 BookMovies
               </Typography>
@@ -229,39 +144,166 @@ export default function NavBar() {
               }}
             />
           </Box>
-          <Button
-            component={Link}
-            to="/register"
-            color="inherit"
-            sx={{
-              color: "white",
-              marginRight: "50px",
-              bgcolor: "#cb0d0d",
-              ":hover": { color: "#cb0d0d" },
-            }}
-          >
-            Register
-          </Button>
+          {isLoggedIn ? (
+            <>
+              <Button
+                component={Link}
+                to="/"
+                color="inherit"
+                onClick={handleLogout}
+                sx={{
+                  color: "white",
+                  marginRight: "50px",
+                  bgcolor: "#cb0d0d",
+                  ":hover": { color: "#cb0d0d" },
+                }}
+              >
+                Logout
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button
+                component={Link}
+                to="/register"
+                color="inherit"
+                sx={{
+                  color: "white",
+                  marginRight: "50px",
+                  bgcolor: "#cb0d0d",
+                  ":hover": { color: "#cb0d0d" },
+                }}
+              >
+                Register
+              </Button>
+            </>
+          )}
+
           <Menu
             anchorEl={navOpen}
             open={Boolean(navOpen)}
             onClose={closeNav}
             onClick={closeNav}
           >
-            {menuItems[userRole]?.map((item, index) => (
-              <MenuItem 
-                key={index}
-                component={Link}
-                to={item.to}
-                sx={{
-                  width: "120px",
-                  bgcolor: "white",
-                  ":hover": {color: "#cb0d0d"},
-                }}
-              >
-              {item.text}
-              </MenuItem>
-            ))}
+            {isLoggedIn ? (
+              <>
+                <MenuItem
+                  component={Link}
+                  to="/movies"
+                  onClick={closeNav}
+                  sx={{
+                    width: "80px",
+                    bgcolor: "white",
+                    ":hover": { color: "#cb0d0d" },
+                  }}
+                >
+                  Movies
+                </MenuItem>
+                <MenuItem
+                  component={Link}
+                  to="/bookTickets"
+                  onClick={closeNav}
+                  sx={{
+                    width: "120px",
+                    bgcolor: "white",
+                    ":hover": { color: "#cb0d0d" },
+                  }}
+                >
+                  Book Tickets
+                </MenuItem>
+                {userRole === "Admin" && (
+                  <MenuItem
+                    component={Link}
+                    to="/addMovie"
+                    onClick={closeNav}
+                    sx={{
+                      width: "80px",
+                      bgcolor: "white",
+                      ":hover": { color: "#cb0d0d" },
+                    }}
+                  >
+                    Add Movie
+                  </MenuItem>
+                )}
+                {userRole === "Admin" && (
+                  <MenuItem
+                    component={Link}
+                    to="/deleteMovie"
+                    onClick={closeNav}
+                    sx={{
+                      width: "80px",
+                      bgcolor: "white",
+                      ":hover": { color: "#cb0d0d" },
+                    }}
+                  >
+                    Delete Movie
+                  </MenuItem>
+                )}
+                <MenuItem
+                  component={Link}
+                  to="/"
+                  onClick={handleLogout}
+                  sx={{
+                    width: "80px",
+                    bgcolor: "white",
+                    ":hover": { color: "#cb0d0d" },
+                  }}
+                >
+                  Logout
+                </MenuItem>
+              </>
+            ) : (
+              <>
+                <MenuItem
+                  component={Link}
+                  to="/login"
+                  onClick={closeNav}
+                  sx={{
+                    width: "80px",
+                    bgcolor: "white",
+                    ":hover": { color: "#cb0d0d" },
+                  }}
+                >
+                  Login
+                </MenuItem>
+                <MenuItem
+                  component={Link}
+                  to="/movies"
+                  onClick={closeNav}
+                  sx={{
+                    width: "80px",
+                    bgcolor: "white",
+                    ":hover": { color: "#cb0d0d" },
+                  }}
+                >
+                  Movies
+                </MenuItem>
+                <MenuItem
+                  component={Link}
+                  to="/"
+                  onClick={closeNav}
+                  sx={{
+                    width: "80px",
+                    bgcolor: "white",
+                    ":hover": { color: "#cb0d0d" },
+                  }}
+                >
+                  Profile
+                </MenuItem>
+                <MenuItem
+                  component={Link}
+                  to="/register"
+                  onClick={closeNav}
+                  sx={{
+                    width: "80px",
+                    bgcolor: "white",
+                    ":hover": { color: "#cb0d0d" },
+                  }}
+                >
+                  Register
+                </MenuItem>
+              </>
+            )}
           </Menu>
         </Toolbar>
       </AppBar>
