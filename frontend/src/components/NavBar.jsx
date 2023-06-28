@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import AppBar from "@mui/material/AppBar";
+import axios from "axios";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
@@ -8,17 +9,20 @@ import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
 import { MenuItem, Menu, TextField, Autocomplete } from "@mui/material";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { moviesData } from "./MovieData";
+// import { moviesData } from "./MovieData";
 
 export default function NavBar() {
   const [navOpen, setNavOpen] = useState(null);
   const [searchOptions, setSearchOptions] = useState([]);
+  const [moviesData, setMoviesData] = useState([]);
   const [searchResults, setSearchResults] = useState([]);
   const [userRole, setUserRole] = useState("");
   const [menuItems, setMenuItems] = useState([]);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const successResponse = localStorage.getItem("successResponse");
+
   //  const userRole = location.state ? location.state.role : "";
 
   const toggleNav = (event) => {
@@ -31,7 +35,7 @@ export default function NavBar() {
 
   useEffect(() => {
     const role = localStorage.getItem("role");
-    setIsLoggedIn(true);
+    setIsLoggedIn(!!role);
     setUserRole(role);
 
     const getMenuItems = () => {
@@ -45,7 +49,7 @@ export default function NavBar() {
             { label: "Delete Movie", path: "/deleteMovie" },
             { label: "Logout", path: "/" },
           ];
-        } else if(userRole === "User"){
+        } else if (userRole === "User") {
           return [
             { label: "Movies", path: "/movies" },
             { label: "Book Tickets", path: "/bookTickets" },
@@ -54,9 +58,9 @@ export default function NavBar() {
         } else {
           return [
             { label: "Login", path: "/login" },
-          { label: "Movies", path: "/movies" },
-          { label: "Register", path: "/register" },
-          ]
+            { label: "Movies", path: "/movies" },
+            { label: "Register", path: "/register" },
+          ];
         }
       } else {
         return [
@@ -69,15 +73,33 @@ export default function NavBar() {
 
     const updatedMenuItems = getMenuItems();
     setMenuItems(updatedMenuItems);
+    fetchMoviesData();
   }, [isLoggedIn, userRole, location]);
+
+  const fetchMoviesData = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:9090/api/v1.0/moviebooking/all",
+        {
+          headers: {
+            Authorization: successResponse,
+          },
+        }
+      );
+      setMoviesData(response.data);
+      console.log(response.data);
+    } catch (error) {
+      console.error("Error fetching movies: ", error);
+    }
+  };
 
   const handleSearch = (event, value) => {
     if (value) {
       const results = moviesData.filter((movie) =>
-        movie.title.toLowerCase().includes(value.toLowerCase())
+        movie.moviename.toLowerCase().includes(value.toLowerCase())
       );
 
-      setSearchOptions(results.map((movie) => movie.title));
+      setSearchOptions(results.map((movie) => movie.moviename));
       setSearchResults(results);
       console.log("Search results:", results);
     } else {
@@ -88,10 +110,10 @@ export default function NavBar() {
     // Redirect to BookTickets page when a movie is selected
     if (event.key === "Enter" && searchOptions.includes(value)) {
       const selectedMovie = searchResults.find(
-        (movie) => movie.title.toLowerCase() === value.toLowerCase()
+        (movie) => movie.moviename.toLowerCase() === value.toLowerCase()
       );
       const movieId = selectedMovie.id;
-      navigate(`/movies/${movieId}/bookTickets`);
+      navigate(`/movies/${movie.moviename}/bookTickets`);
     }
   };
 
@@ -217,29 +239,30 @@ export default function NavBar() {
               </Button>
             </>
           )}
-
-          <Menu
-            anchorEl={navOpen}
-            open={Boolean(navOpen)}
-            onClose={closeNav}
-            onClick={closeNav}
-          >
-            {menuItems.map((menuItem, index) => (
-              <MenuItem
-                key={index}
-                component={Link}
-                to={menuItem.path}
-                onClick={closeNav}
-                sx={{
-                  width: "90px",
-                  bgcolor: "white",
-                  ":hover": { color: "#cb0d0d" },
-                }}
-              >
-                {menuItem.label}
-              </MenuItem>
-            ))}
-          </Menu>
+          {menuItems.length > 0 && (
+            <Menu
+              anchorEl={navOpen}
+              open={Boolean(navOpen)}
+              onClose={closeNav}
+              onClick={closeNav}
+            >
+              {menuItems.map((menuItem, index) => (
+                <MenuItem
+                  key={index}
+                  component={Link}
+                  to={menuItem.path}
+                  onClick={closeNav}
+                  sx={{
+                    width: "125px",
+                    bgcolor: "white",
+                    ":hover": { color: "#cb0d0d" },
+                  }}
+                >
+                  {menuItem.label}
+                </MenuItem>
+              ))}
+            </Menu>
+          )}
         </Toolbar>
       </AppBar>
     </Box>
