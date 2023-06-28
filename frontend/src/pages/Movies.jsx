@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
 import { Box, Grid, Typography, Chip } from "@mui/material";
 // import { moviesData } from "../components/MovieData";
 import { Link } from "react-router-dom";
@@ -9,6 +10,7 @@ const Movies = () => {
   const [moviesData, setMoviesData] = useState([]);
   const [showUpcomingMovies, setShowUpcomingMovies] = useState(false);
   const [selectedMovie, setSelectedMovie] = useState(null);
+  const successResponse = localStorage.getItem("successResponse");
 
   useEffect(() => {
     fetchMoviesData();
@@ -52,13 +54,20 @@ const Movies = () => {
     setShowUpcomingMovies(false);
   };
 
-  const filteredMovies =
-    selectedGenres.length === 0
-      ? moviesData
-      : moviesData.filter((movie) => {
-          const movieGenres = movie.genre.split("/");
-          return selectedGenres.some((genre) => movieGenres.includes(genre));
-        });
+  const filteredMovies = moviesData.filter((movie) => {
+    const releaseDate = new Date(movie.releaseDate);
+    const currentDate = new Date();
+    return releaseDate <= currentDate;
+  });
+
+  // const filteredMovies =
+  //   selectedGenres.length === 0
+  //     ? moviesData
+  //     : moviesData.filter((movie) => {
+  //         const movieGenres = movie.genre.split("/");
+  //         return selectedGenres.some((genre) => movieGenres.includes(genre));
+  //       });
+      
 
   const allGenres = moviesData.reduce((genres, movie) => {
     const movieGenres = movie.genre.split("/");
@@ -156,7 +165,7 @@ const Movies = () => {
                 <Typography
                   variant="h6"
                   sx={{
-                    width: "890px",
+                    width: "830px",
                     borderRadius: "20px",
                     color: "black",
                     mr: 1,

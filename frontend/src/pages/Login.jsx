@@ -83,7 +83,7 @@ export default function SignIn() {
       localStorage.setItem("successResponse", JSON.stringify(response.data));
       const successResponse = localStorage.getItem("successResponse");
       console.log(successResponse);
-       navigate("/home");
+       navigate("/home", {state: {role: response.data.role[0]} });
     })
     .catch((error) =>{
       if(error.response){

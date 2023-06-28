@@ -7,7 +7,7 @@ import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
 import { MenuItem, Menu, TextField, Autocomplete } from "@mui/material";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { moviesData } from "./MovieData";
 
 export default function NavBar() {
@@ -15,8 +15,11 @@ export default function NavBar() {
   const [searchOptions, setSearchOptions] = useState([]);
   const [searchResults, setSearchResults] = useState([]);
   const [userRole, setUserRole] = useState("");
+  const [menuItems, setMenuItems] = useState([]);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+  //  const userRole = location.state ? location.state.role : "";
 
   const toggleNav = (event) => {
     setNavOpen(event.currentTarget);
@@ -30,7 +33,43 @@ export default function NavBar() {
     const role = localStorage.getItem("role");
     setIsLoggedIn(true);
     setUserRole(role);
-  }, []);
+
+    const getMenuItems = () => {
+      if (isLoggedIn) {
+        if (userRole === "Admin") {
+          return [
+            { label: "Movies", path: "/movies" },
+            { label: "Book Tickets", path: "/bookTickets" },
+            { label: "Add Movie", path: "/addMovie" },
+            { label: "Update Movie", path: "/updateMovie" },
+            { label: "Delete Movie", path: "/deleteMovie" },
+            { label: "Logout", path: "/" },
+          ];
+        } else if(userRole === "User"){
+          return [
+            { label: "Movies", path: "/movies" },
+            { label: "Book Tickets", path: "/bookTickets" },
+            { label: "Logout", path: "/" },
+          ];
+        } else {
+          return [
+            { label: "Login", path: "/login" },
+          { label: "Movies", path: "/movies" },
+          { label: "Register", path: "/register" },
+          ]
+        }
+      } else {
+        return [
+          { label: "Login", path: "/login" },
+          { label: "Movies", path: "/movies" },
+          { label: "Register", path: "/register" },
+        ];
+      }
+    };
+
+    const updatedMenuItems = getMenuItems();
+    setMenuItems(updatedMenuItems);
+  }, [isLoggedIn, userRole, location]);
 
   const handleSearch = (event, value) => {
     if (value) {
@@ -185,139 +224,21 @@ export default function NavBar() {
             onClose={closeNav}
             onClick={closeNav}
           >
-            {isLoggedIn ? (
-              <>
-                <MenuItem
-                  component={Link}
-                  to="/movies"
-                  onClick={closeNav}
-                  sx={{
-                    width: "80px",
-                    bgcolor: "white",
-                    ":hover": { color: "#cb0d0d" },
-                  }}
-                >
-                  Movies
-                </MenuItem>
-                <MenuItem
-                  component={Link}
-                  to="/bookTickets"
-                  onClick={closeNav}
-                  sx={{
-                    width: "120px",
-                    bgcolor: "white",
-                    ":hover": { color: "#cb0d0d" },
-                  }}
-                >
-                  Book Tickets
-                </MenuItem>
-                {userRole === "Admin" && (
-                  <MenuItem
-                    component={Link}
-                    to="/addMovie"
-                    onClick={closeNav}
-                    sx={{
-                      width: "80px",
-                      bgcolor: "white",
-                      ":hover": { color: "#cb0d0d" },
-                    }}
-                  >
-                    Add Movie
-                  </MenuItem>
-                )}
-                {userRole === "Admin" && (
-                  <MenuItem
-                    component={Link}
-                    to="/updateMovie"
-                    onClick={closeNav}
-                    sx={{
-                      width: "80px",
-                      bgcolor: "white",
-                      ":hover": { color: "#cb0d0d" },
-                    }}
-                  >
-                    Update Movie
-                  </MenuItem>
-                )}
-                {userRole === "Admin" && (
-                  <MenuItem
-                    component={Link}
-                    to="/deleteMovie"
-                    onClick={closeNav}
-                    sx={{
-                      width: "80px",
-                      bgcolor: "white",
-                      ":hover": { color: "#cb0d0d" },
-                    }}
-                  >
-                    Delete Movie
-                  </MenuItem>
-                )}
-                <MenuItem
-                  component={Link}
-                  to="/"
-                  onClick={handleLogout}
-                  sx={{
-                    width: "80px",
-                    bgcolor: "white",
-                    ":hover": { color: "#cb0d0d" },
-                  }}
-                >
-                  Logout
-                </MenuItem>
-              </>
-            ) : (
-              <>
-                <MenuItem
-                  component={Link}
-                  to="/login"
-                  onClick={closeNav}
-                  sx={{
-                    width: "80px",
-                    bgcolor: "white",
-                    ":hover": { color: "#cb0d0d" },
-                  }}
-                >
-                  Login
-                </MenuItem>
-                <MenuItem
-                  component={Link}
-                  to="/movies"
-                  onClick={closeNav}
-                  sx={{
-                    width: "80px",
-                    bgcolor: "white",
-                    ":hover": { color: "#cb0d0d" },
-                  }}
-                >
-                  Movies
-                </MenuItem>
-                <MenuItem
-                  component={Link}
-                  to="/"
-                  onClick={closeNav}
-                  sx={{
-                    width: "80px",
-                    bgcolor: "white",
-                    ":hover": { color: "#cb0d0d" },
-                  }}
-                >
-                  Profile
-                </MenuItem>
-                <MenuItem
-                  component={Link}
-                  to="/register"
-                  onClick={closeNav}
-                  sx={{
-                    width: "80px",
-                    bgcolor: "white",
-                    ":hover": { color: "#cb0d0d" },
-                  }}
-                >
-                  Register
-                </MenuItem>
-              </>
-            )}
+            {menuItems.map((menuItem, index) => (
+              <MenuItem
+                key={index}
+                component={Link}
+                to={menuItem.path}
+                onClick={closeNav}
+                sx={{
+                  width: "90px",
+                  bgcolor: "white",
+                  ":hover": { color: "#cb0d0d" },
+                }}
+              >
+                {menuItem.label}
+              </MenuItem>
+            ))}
           </Menu>
         </Toolbar>
       </AppBar>
