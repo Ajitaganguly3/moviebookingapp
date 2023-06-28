@@ -52,60 +52,37 @@ public class TicketService {
 //
 //	}
 
-	public MessageResponse bookTicket(String moviename, int noOfTickets, List<String> seatNumber)
-			throws MovieAlreadyExistsException,  MovieNotFoundException {
+	public MessageResponse bookTicket(String moviename, TicketDTO ticketDTO)
+			throws MovieAlreadyExistsException, MovieNotFoundException {
 		Optional<Movies> optionalMovie = movieRepository.findByMoviename(moviename);
-		if(optionalMovie.isPresent()) {
-			Movies movie = optionalMovie.orElseThrow(() -> new MovieAlreadyExistsException("Movie already exists"));
+		if (optionalMovie.isPresent()) {
+			Movies movie = optionalMovie.get();
 
-			if (movie.getNoOfTicketsAllotted() < noOfTickets) {
-				throw new RuntimeException("Not enough ticets available");
+			if (movie.getNoOfTicketsAllotted() < ticketDTO.getNoOfTickets()) {
+				throw new RuntimeException("Not enough tickets available");
 			}
 
 			Ticket ticket = new Ticket();
 			ticket.setMoviename(moviename);
 			ticket.setTheatrename(movie.getTheatrename());
-			ticket.setNoOfTickets(noOfTickets);
-			ticket.setSeatnumber(seatNumber);
+			ticket.setNoOfTickets(ticketDTO.getNoOfTickets());
+			ticket.setSeatnumber(ticketDTO.getSeatnumber());
 
-			movie.setNoOfTicketsAllotted(movie.getNoOfTicketsAllotted() - noOfTickets);
+			movie.setNoOfTicketsAllotted(movie.getNoOfTicketsAllotted() - ticketDTO.getNoOfTickets());
 			movieRepository.save(movie);
 
 			ticket = ticketRepository.save(ticket);
-		}else {
-			throw new MovieNotFoundException("Movie not found with the name: " + moviename);
-		}
-		
-
-		return new MessageResponse("Tickets Booked Successfully", HttpStatus.OK);
-	}
-
-	public MessageResponse updateTicketStatus(String moviename) throws TicketNotFoundException, MovieNotFoundException {
-		Optional<Movies> movie = movieRepository.findByMovienameOrderByMovienameAsc(moviename);
-		if (movie.isPresent()) {
-			Movies existingMovie = movie.get();
-			int totalBookedTickets = getBookedTicketCount(moviename);
-
-			if (totalBookedTickets == existingMovie.getNoOfTicketsAllotted()) {
-				existingMovie.setStatus("SOLD OUT");
-			} else {
-				existingMovie.setStatus("BOOK ASAP");
-			}
-			movieRepository.save(existingMovie);
+			return new MessageResponse("Tickets Booked Successfully", HttpStatus.OK);
 		} else {
 			throw new MovieNotFoundException("Movie not found with the name: " + moviename);
 		}
 
-		return new MessageResponse("Tickets Updated Successfully", HttpStatus.OK);
 	}
 
-	
-	
-
-	private int getBookedTicketCount(String moviename) {
-		List<Ticket> tickets = ticketRepository.findByMovieName(moviename);
-		return tickets.stream().mapToInt(Ticket::getNoOfTickets).sum();
-	}
+//	private int getBookedTicketCount(String moviename) {
+//		List<Ticket> tickets = ticketRepository.findByMovieName(moviename);
+//		return tickets.stream().mapToInt(Ticket::getNoOfTickets).sum();
+//	}
 
 //	private TicketDTO convertToDTO(Ticket ticket) {
 //		TicketDTO ticketDTO = new TicketDTO();

@@ -14,6 +14,7 @@ import com.moviebookingapp.dto.MessageResponse;
 import com.moviebookingapp.dto.MoviesDTO;
 import com.moviebookingapp.exceptions.MovieAlreadyExistsException;
 import com.moviebookingapp.exceptions.MovieNotFoundException;
+import com.moviebookingapp.exceptions.TicketNotFoundException;
 import com.moviebookingapp.model.Movies;
 import com.moviebookingapp.repository.MoviesRepository;
 
@@ -61,7 +62,7 @@ public class MovieService {
 
 		return new MessageResponse("Movies added successfully", HttpStatus.OK);
 	}
-	
+
 	public MessageResponse deleteMovie(String moviename) throws MovieNotFoundException {
 
 		Optional<Movies> movie = moviesRepository.findByMoviename(moviename);
@@ -72,6 +73,26 @@ public class MovieService {
 		}
 		return new MessageResponse("Movie Deleted Successfully", HttpStatus.OK);
 
+	}
+
+	public MessageResponse updateTicketStatus(String moviename) throws TicketNotFoundException, MovieNotFoundException {
+		Optional<Movies> movie = moviesRepository.findByMovienameOrderByMovienameAsc(moviename);
+		if (movie.isPresent()) {
+			Movies existingMovie = movie.get();
+
+			if (existingMovie.getNoOfTicketsAllotted() == 0) {
+				existingMovie.setStatus("SOLD OUT");
+			} else if (existingMovie.getNoOfTicketsAllotted() < 10) {
+				existingMovie.setStatus("BOOK ASAP");
+			} else {
+				existingMovie.setStatus("Available");
+			}
+			moviesRepository.save(existingMovie);
+		} else {
+			throw new MovieNotFoundException("Movie not found with the name: " + moviename);
+		}
+
+		return new MessageResponse("Tickets Updated Successfully", HttpStatus.OK);
 	}
 
 	private List<MoviesDTO> convertToDTOList(List<Movies> movies) {

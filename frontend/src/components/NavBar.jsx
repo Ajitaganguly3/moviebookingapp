@@ -228,6 +228,20 @@ export default function NavBar() {
                 {userRole === "Admin" && (
                   <MenuItem
                     component={Link}
+                    to="/updateMovie"
+                    onClick={closeNav}
+                    sx={{
+                      width: "80px",
+                      bgcolor: "white",
+                      ":hover": { color: "#cb0d0d" },
+                    }}
+                  >
+                    Update Movie
+                  </MenuItem>
+                )}
+                {userRole === "Admin" && (
+                  <MenuItem
+                    component={Link}
                     to="/deleteMovie"
                     onClick={closeNav}
                     sx={{

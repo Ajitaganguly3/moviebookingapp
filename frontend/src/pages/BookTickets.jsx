@@ -134,7 +134,7 @@ function BookTickets() {
                 style={{ marginLeft: "5px" }}
               />
             </label>
-            <p>Theartre : {selectedMovie[0].theatreName}</p>
+            <p>Theartre : {selectedMovie[0].theatrename}</p>
             <p>Total Amount: Rs. {numSeats * selectedMovie[0].price}</p>
             <button
               type="submit"

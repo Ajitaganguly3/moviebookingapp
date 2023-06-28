@@ -5,27 +5,24 @@ import java.util.List;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+
 import lombok.Data;
 
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 @Data
 @Document
 public class Ticket {
 
 	@Id
-	private String ticketId;
+	private String _id;
 
 	private String moviename;
 	private String theatrename;
 	private int noOfTickets;
 	private List<String> seatnumber;
 
-	public String getTicketId() {
-		return ticketId;
-	}
-
-	public void setTicketId(String ticketId) {
-		this.ticketId = ticketId;
-	}
+	
 
 	public String getMoviename() {
 		return moviename;

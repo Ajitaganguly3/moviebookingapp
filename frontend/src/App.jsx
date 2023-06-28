@@ -13,6 +13,7 @@ import Movies from "./pages/Movies";
 import BookTickets from "./pages/BookTickets";
 import AddMovie from "./pages/AddMovie";
 import DeleteMovie from "./pages/DeleteMovie";
+import UpdateMovie from "./pages/UpdateMovie";
 
 const App = () => {
   return (
@@ -28,6 +29,7 @@ const App = () => {
         <Route path="/bookTickets" element={<BookTickets />} />
         <Route path="/addMovie" element={<AddMovie />} />
         <Route path="/deleteMovie" element={<DeleteMovie />} />
+        <Route path="/updateMovie" element={<UpdateMovie />} />
       </Routes>
       <Footer />
     </Router>

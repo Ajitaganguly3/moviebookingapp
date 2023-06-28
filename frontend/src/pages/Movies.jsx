@@ -1,14 +1,32 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Box, Grid, Typography, Chip } from "@mui/material";
-import { moviesData } from "../components/MovieData";
+// import { moviesData } from "../components/MovieData";
 import { Link } from "react-router-dom";
 
 const Movies = () => {
   const [selectedGenres, setSelectedGenres] = useState([]);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [moviesData, setMoviesData] = useState([]);
   const [showUpcomingMovies, setShowUpcomingMovies] = useState(false);
-
   const [selectedMovie, setSelectedMovie] = useState(null);
+
+  useEffect(() => {
+    fetchMoviesData();
+  }, []);
+
+  const fetchMoviesData = async () => {
+    try{
+          const response = await axios.get("http://localhost:9090/api/v1.0/moviebooking/all", {
+            headers: {
+              Authorization: successResponse,
+            },
+          });
+          setMoviesData(response.data);
+          console.log(response.data);
+      }catch(error){
+            console.error("Error fetching movies: ", error);
+          }
+  };
 
   const handleMovieSelection = (movie) => {
     setSelectedMovie(movie);
@@ -153,12 +171,15 @@ const Movies = () => {
             {showUpcomingMovies
               ? upcomingMovies.map((movie) => (
                   <Grid item key={movie.id} xs={12} sm={6} md={4} lg={3}>
+                    <Link to={`/movies/${movie.moviename}/bookTickets`}>
                     <img
-                      src={movie.posterUrl}
-                      alt={movie.title}
+                      src={movie.posterURL}
+                      alt={movie.moviename}
+                      onClick={() => handleMovieSelection(movie)}
                       style={{ width: "100%", height: "auto" }}
                     />
-                    <Typography variant="subtitle1">{movie.title}</Typography>
+                    </Link>
+                    <Typography variant="subtitle1">{movie.moviename}</Typography>
                     <Typography variant="caption">
                       {movie.releaseDate}
                     </Typography>
@@ -168,15 +189,15 @@ const Movies = () => {
                 ))
               : filteredMovies.map((movie) => (
                   <Grid item key={movie.id} xs={12} sm={6} md={4} lg={3}>
-                    <Link to={`/movies/${movie.id}/bookTickets`}>
+                  <Link to={`/movies/${movie.moviename}/bookTickets`}>
                     <img
-                      src={movie.posterUrl}
-                      alt={movie.title}
+                      src={movie.posterURL}
+                      alt={movie.moviename}
                       style={{ width: "100%", height: "auto" }}
                       onClick={() => handleMovieSelection(movie)}
                     />
                     </Link>
-                    <Typography variant="subtitle1" sx = {{color: "#9d9d9d"}}>{movie.title}</Typography>
+                    <Typography variant="subtitle1" sx = {{color: "#9d9d9d"}}>{movie.moviename}</Typography>
                     <Typography variant="caption" sx={{ color: "#777" }}>{movie.genre}</Typography>
                   </Grid>
                 ))}

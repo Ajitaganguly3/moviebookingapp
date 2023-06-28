@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,6 +22,7 @@ import com.moviebookingapp.dto.SuccessResponse;
 import com.moviebookingapp.exceptions.InvalidTokenException;
 import com.moviebookingapp.exceptions.MovieAlreadyExistsException;
 import com.moviebookingapp.exceptions.MovieNotFoundException;
+import com.moviebookingapp.exceptions.TicketNotFoundException;
 import com.moviebookingapp.exceptions.UnauthorizedException;
 import com.moviebookingapp.model.Movies;
 import com.moviebookingapp.service.MovieService;
@@ -121,6 +123,31 @@ public class MoviesController {
 		}
 
 		return ResponseEntity.ok(movieService.deleteMovie(moviename));
+	}
+
+	@Operation(summary = "This API will update the status of the tickets in the database")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "Tickets Updated Successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = SuccessResponse.class))),
+			@ApiResponse(responseCode = "400", description = "Movie not found", content = @Content(mediaType = "application/json", schema = @Schema(implementation = MessageResponse.class))),
+			@ApiResponse(responseCode = "403", description = "Invalid token passed or token invalidated", content = @Content) })
+
+	@PutMapping(value = "/{moviename}/update", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<?> updateTicketStatus(@PathVariable("moviename") String moviename,
+			@RequestHeader("Authorization") SuccessResponse successResponse)
+			throws InvalidTokenException, UnauthorizedException, TicketNotFoundException {
+
+		if (!userProfileController.validate(successResponse).getBody().isValid())
+			throw new InvalidTokenException("Invalid token passed or token invalidated");
+
+		if (!successResponse.getRole().stream().anyMatch(r -> r.equalsIgnoreCase("admin"))) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+		}
+
+		try {
+			return ResponseEntity.ok(movieService.updateTicketStatus(moviename));
+		} catch (MovieNotFoundException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+		}
 	}
 
 }
