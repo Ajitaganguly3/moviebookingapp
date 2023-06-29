@@ -37,10 +37,11 @@ export default function NavBar() {
     const role = localStorage.getItem("role");
     setIsLoggedIn(!!role);
     setUserRole(role);
+    fetchMoviesData();
 
     const getMenuItems = () => {
       if (isLoggedIn) {
-        if (userRole === "Admin") {
+        if (userRole === "Admin") { 
           return [
             { label: "Movies", path: "/movies" },
             { label: "Book Tickets", path: "/bookTickets" },
@@ -73,25 +74,10 @@ export default function NavBar() {
 
     const updatedMenuItems = getMenuItems();
     setMenuItems(updatedMenuItems);
-    fetchMoviesData();
+    
   }, [isLoggedIn, userRole, location]);
 
-  const fetchMoviesData = async () => {
-    try {
-      const response = await axios.get(
-        "http://localhost:9090/api/v1.0/moviebooking/all",
-        {
-          headers: {
-            Authorization: successResponse,
-          },
-        }
-      );
-      setMoviesData(response.data);
-      console.log(response.data);
-    } catch (error) {
-      console.error("Error fetching movies: ", error);
-    }
-  };
+ 
 
   const handleSearch = (event, value) => {
     if (value) {
@@ -113,7 +99,25 @@ export default function NavBar() {
         (movie) => movie.moviename.toLowerCase() === value.toLowerCase()
       );
       const movieId = selectedMovie.id;
-      navigate(`/movies/${movie.moviename}/bookTickets`);
+      navigate(`/movies/${selectedMovie.moviename}/bookTickets`);
+      console.log(selectedMovie.moviename);
+    }
+  };
+
+  const fetchMoviesData = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:9090/api/v1.0/moviebooking/all`,
+        {
+          headers: {
+            Authorization: successResponse,
+          },
+        }
+      );
+      setMoviesData(response.data);
+      console.log(response.data);
+    } catch (error) {
+      console.error("Error fetching movies: ", error);
     }
   };
 

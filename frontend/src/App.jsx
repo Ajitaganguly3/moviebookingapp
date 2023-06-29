@@ -14,6 +14,7 @@ import BookTickets from "./pages/BookTickets";
 import AddMovie from "./pages/AddMovie";
 import DeleteMovie from "./pages/DeleteMovie";
 import UpdateMovie from "./pages/UpdateMovie";
+import MovieDetails from "./pages/MovieDetails";
 
 const App = () => {
   return (
@@ -30,6 +31,7 @@ const App = () => {
         <Route path="/addMovie" element={<AddMovie />} />
         <Route path="/deleteMovie" element={<DeleteMovie />} />
         <Route path="/updateMovie" element={<UpdateMovie />} />
+        <Route path="/movies/:moviename/movieDetails" element = {<MovieDetails />} />
       </Routes>
       <Footer />
     </Router>

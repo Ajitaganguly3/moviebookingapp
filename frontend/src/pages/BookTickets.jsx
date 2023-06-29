@@ -79,20 +79,9 @@ function BookTickets() {
     <div>
       <h1 style={{ textAlign: "center", marginTop: "100px" }}>Book Tickets</h1>
       {selectedMovie && (
-        <div style={{ display: "flex", marginTop: "50px" }}>
-          <div style={{ marginRight: "100px", display: "flex" }}>
-            <img
-              src={selectedMovie[0].posterURL}
-              alt={selectedMovie[0].moviename}
-              style={{ width: "400px", height: "auto" }}
-            />
-          </div>
-          <div style={{ justifyContent: "center" }}>
+        <div style={{ display: "flex", marginTop: "50px", justifyContent: "center"}}>
+          <div style={{ justifyContent: "center", textAlign: "center" }}>
             <h2>{selectedMovie[0].moviename}</h2>
-            <p>{selectedMovie[0].genre}</p>
-            <p>{selectedMovie[0].releaseDate}</p>
-            <h3>About the Movie:</h3>
-            <p>{selectedMovie[0].about}</p>
             {!showForm && (
               <button
                 type="button"

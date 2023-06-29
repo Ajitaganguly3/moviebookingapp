@@ -180,7 +180,7 @@ const Movies = () => {
             {showUpcomingMovies
               ? upcomingMovies.map((movie) => (
                   <Grid item key={movie.id} xs={12} sm={6} md={4} lg={3}>
-                    <Link to={`/movies/${movie.moviename}/bookTickets`}>
+                    <Link to={`/movies/${movie.moviename}/movieDetails`}>
                     <img
                       src={movie.posterURL}
                       alt={movie.moviename}
@@ -198,7 +198,7 @@ const Movies = () => {
                 ))
               : filteredMovies.map((movie) => (
                   <Grid item key={movie.id} xs={12} sm={6} md={4} lg={3}>
-                  <Link to={`/movies/${movie.moviename}/bookTickets`}>
+                  <Link to={`/movies/${movie.moviename}/movieDetails`}>
                     <img
                       src={movie.posterURL}
                       alt={movie.moviename}

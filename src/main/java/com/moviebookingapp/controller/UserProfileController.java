@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.moviebookingapp.dto.AuthResponse;
@@ -132,13 +133,13 @@ public class UserProfileController {
 			@ApiResponse(responseCode = "200", description = "Password Updated Successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = MessageResponse.class))),
 			@ApiResponse(responseCode = "400", description = "Login Id does not exist", content = @Content) })
 
-	@GetMapping("/{userName}/forgot")
-	public ResponseEntity<MessageResponse> forgotPassword(@PathVariable String userName,
+	@GetMapping("/{username}/forgot")
+	public ResponseEntity<MessageResponse> forgotPassword(@PathVariable String username,
 			@RequestHeader("Authorization") SuccessResponse successResponse,
-			@RequestHeader String password) throws InvalidTokenException, UnauthorizedException {
+			@RequestParam String password) throws InvalidTokenException, UnauthorizedException {
 		if (!userProfileService.validate(successResponse).isValid())
 			throw new InvalidTokenException("Invalid token passed");
-		return ResponseEntity.ok(userProfileService.forgotPassword(userName, successResponse.getToken(), password));
+		return ResponseEntity.ok(userProfileService.forgotPassword(username, successResponse.getToken(), password));
 
 	}
 

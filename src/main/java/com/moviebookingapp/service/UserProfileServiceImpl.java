@@ -2,6 +2,7 @@ package com.moviebookingapp.service;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -133,11 +134,24 @@ public class UserProfileServiceImpl implements UserProfileService {
 	@Override
 	public MessageResponse forgotPassword(String customerName, String token, String password) {
 
-		UserProfile userEntity = userProfileRepository.findByFirstName(customerName).get().stream()
-				.filter(f -> f.getUsername().equals(jwtUtil.extractUsername(token))).findFirst().get();
-		userEntity.setPassword(password);
-		userProfileRepository.save(userEntity);
-		return new MessageResponse("password updated successfully", HttpStatus.OK);
+//		UserProfile userEntity = userProfileRepository.findByFirstName(customerName).get().stream()
+//				.filter(f -> f.getUsername().equals(jwtUtil.extractUsername(token))).findFirst().get();
+//		userEntity.setPassword(password);
+//		userProfileRepository.save(userEntity);
+//		return new MessageResponse("password updated successfully", HttpStatus.OK);
+
+		Optional<List<UserProfile>> userProfileOptional = userProfileRepository.findByFirstName(customerName);
+		if (userProfileOptional.isPresent() && !userProfileOptional.get().isEmpty()) {
+			List<UserProfile> userProfile = userProfileOptional.get();
+			UserProfile userEntity = userProfile.stream()
+					.filter(f -> f.getUsername().equals(jwtUtil.extractUsername(token))).findFirst()
+					.orElseThrow(() -> new NoSuchElementException("User not found"));
+			userEntity.setPassword(password);
+			userProfileRepository.save(userEntity);
+			return new MessageResponse("Password updated successfully", HttpStatus.OK);
+		} else {
+			throw new NoSuchElementException("User not found!!");
+		}
 
 	}
 
