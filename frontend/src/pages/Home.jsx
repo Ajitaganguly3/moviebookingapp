@@ -47,7 +47,7 @@ const Home = () => {
         {moviesData
         .filter((movie) => movie.moviename.charAt(0) === "T" || movie.moviename.charAt(0) === "F")
         .slice(0, 3).map((movie) => (
-          <div key={movie.id} style={{ position: "relative" }}>
+          <div key={movie.moviename} style={{ position: "relative" }}>
             <Link to={`/movies/${movie.id}`}>
               <img
                 src={movie.posterURL}
@@ -89,8 +89,8 @@ const Home = () => {
         {moviesData
         .sort((a, b) => new Date(b.releaseDate) - new Date(a.releaseDate))
         .map((movie) => (
-          <Grid item key={movie.id} xs={12} sm={6} md={4} lg={3}>
-            <Link to={`/movies/${movie.moviename}/bookTickets`}>
+          <Grid item key={movie.moviename} xs={12} sm={6} md={4} lg={3}>
+            <Link to={`/movies/${movie.moviename}/movieDetails`}>
               <img
                 src={movie.posterURL}
                 alt={movie.moviename}

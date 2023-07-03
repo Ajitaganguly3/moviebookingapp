@@ -33,7 +33,15 @@ function BookTickets() {
         console.log(selectedMovie[0].moviename);
       })
       .catch((error) => {
-        console.error("Error fetching movie data", error);
+        if(error.response){
+          console.log(error.response.data);
+          console.log(error.response.status);
+          console.log(error.response.headers);
+        } else if(error.request){
+          console.log(error.request);
+        } else{
+          console.log("Error", error.message);
+        }
       });
   }, [moviename]);
 
@@ -82,7 +90,7 @@ function BookTickets() {
 
   return (
     <div>
-      <h1 style={{ textAlign: "center", marginTop: "100px" }}>Book Tickets</h1>
+      <h1 style={{ textAlign: "center", marginTop: "100px" }}>Movie Details</h1>
       {selectedMovie && (
         <div style={{ display: "flex", marginTop: "50px" }}>
           <div style={{ marginRight: "100px", display: "flex" }}>
