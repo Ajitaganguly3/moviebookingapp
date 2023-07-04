@@ -85,13 +85,12 @@ const theme = createTheme({
 });
 
 function BookTickets() {
- 
-  const [dialogOpen, setDialogOpen] = useState(false);
+  
   const [selectedMovie, setSelectedMovie] = useState(null);
   const [numSeats, setNumSeats] = useState(0);
   const [selectedSeats, setSelectedSeats] = useState([]);
   const [success, setSuccess] = useState(false);
-  const [showForm, setShowForm] = useState(false);
+  const [bookedSeatNumbers, setBookedSeatNumbers] = useState([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [bookingDetails, setBookingDetails] = useState({});
   const successResponse = localStorage.getItem("successResponse");
@@ -126,10 +125,16 @@ function BookTickets() {
 
   const handleSeatClick = (row, column) => {
     setSelectedSeats((prevSelectedSeats) => {
-      const seat = {row, column};
-      if (prevSelectedSeats.some((selectedSeat) => selectedSeat.row === row && selectedSeat.column === column)) {
+      const seat = { row, column };
+      if (
+        prevSelectedSeats.some(
+          (selectedSeat) =>
+            selectedSeat.row === row && selectedSeat.column === column
+        )
+      ) {
         return prevSelectedSeats.filter(
-          (selectedSeat) => selectedSeat.row !== row || selectedSeat.column !== column
+          (selectedSeat) =>
+            selectedSeat.row !== row || selectedSeat.column !== column
         );
       } else {
         return [...prevSelectedSeats, seat];
@@ -138,41 +143,16 @@ function BookTickets() {
   };
   const isSeatSelected = (row, column) => {
     const seat = `${row}${column}`;
-    return selectedSeats.includes(seat);
+    return selectedSeats.some(
+      (selectedSeat) =>
+        selectedSeat.row === row && selectedSeat.column === column
+    );
   };
 
-  // const handleFormSubmit = (event) => {
-  //   event.preventDefault();
-  //   // Validate form fields
-  //   if (selectedMovie && numSeats && selectedSeats.length > 0) {
-  //     const ticketDto = {
-  //       moviename: selectedMovie[0].moviename,
-  //       theatrename: selectedMovie[0].theatrename,
-  //       noOfTickets: numSeats,
-  //       seatnumber: selectedSeats.map((seat) => seat.number),
-  //     };
-
-  //     axios
-  //       .post(
-  //         `http://localhost:9090/api/v1.0/moviebooking/${encodeURIComponent(
-  //           selectedMovie[0].moviename
-  //         )}/book`,
-  //         ticketDto,
-  //         {
-  //           headers: {
-  //             Authorization: successResponse,
-  //           },
-  //         }
-  //       )
-  //       .then((response) => {
-  //         setSuccess(true);
-  //         handleOpenDialog();
-  //       })
-  //       .catch((error) => {
-  //         console.error("Error booking tickets", error);
-  //       });
-  //   }
-  // };
+  const isSeatBooked = (row, column) => {
+    const seatNumber = `${row}${column}`;
+    return bookedSeatNumbers.includes(seatNumber);
+  };
 
   const handleOpenDialog = () => {
     setIsDialogOpen(true);
@@ -185,12 +165,12 @@ function BookTickets() {
       moviename: selectedMovie[0].moviename,
       theatrename: selectedMovie[0].theatrename,
       noOfTickets: numSeats,
-      seatnumber: seatNumberArray.join(", "),
+      seatnumber: seatNumberArray,
     };
 
     const bookingSummary = {
       moviename: selectedMovie[0].moviename,
-      seatnumbers: ticketDto.seatnumber,
+      seatnumbers: ticketDto.seatnumber.join(", "),
       price: selectedSeats.length * selectedMovie[0].price,
     };
 
@@ -210,15 +190,20 @@ function BookTickets() {
         setSuccess(true);
         handleOpenDialog();
         setBookingDetails(bookingSummary);
+
+        setBookedSeatNumbers((prevBookedSeatNumbers) => [
+          ...prevBookedSeatNumbers,
+          ...seatNumberArray,
+        ]);
       })
       .catch((error) => {
-        if(error.response){
+        if (error.response) {
           console.log(error.response.data);
           console.log(error.response.status);
           console.log(error.response.headers);
-        } else if(error.request){
+        } else if (error.request) {
           console.log(error.request);
-        } else{
+        } else {
           console.log("Error", error.message);
         }
       });
@@ -241,17 +226,16 @@ function BookTickets() {
             {selectedMovie[0].theatrename}
           </Typography>
           <CustomizedTextField
-              margin="normal"
-              required
-              width="100px"
-              id="numSeats"
-              label="Select Seats"
-              name="numSeats"
-              value={numSeats}
-              onChange={handleNumSeatsChange}
-              autoFocus
-            />
-          
+            margin="normal"
+            required
+            width="100px"
+            id="numSeats"
+            label="Select Seats"
+            name="numSeats"
+            value={numSeats}
+            onChange={handleNumSeatsChange}
+            autoFocus
+          />
         </Grid>
 
         {rows.map((row) => (
@@ -269,10 +253,8 @@ function BookTickets() {
                     variant="outlined"
                     square
                     className={`seat ${
-                      selectedSeats.includes(`${rows[0]}${column}`)
-                        ? "selected"
-                        : ""
-                    }`}
+                      isSeatSelected(row, column) ? "selected" : ""
+                    } ${isSeatBooked(row, column) ? "booked" : ""}`}
                     onClick={() => handleSeatClick(row, column)}
                     sx={{
                       width: "25px",
@@ -286,8 +268,10 @@ function BookTickets() {
                       fontWeight: "bold",
                       boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.2)",
                       borderRadius: "20%",
-                      backgroundColor: selectedSeats.includes(`${row}${column}`)
+                      backgroundColor: isSeatSelected(row, column)
                         ? "red"
+                        : isSeatBooked(row, column)
+                        ? "#A9A9A9"
                         : "white",
                     }}
                   >
@@ -314,7 +298,6 @@ function BookTickets() {
     );
   };
 
-
   const seatNumber = selectedSeats.map((seat) => seat.row + seat.column);
   const seatNumberString = seatNumber.join(", ");
 
@@ -335,7 +318,7 @@ function BookTickets() {
               style={{ marginTop: "50px" }}
             >
               {selectedMovie && (
-                <form >
+                <form>
                   <Grid
                     container
                     spacing={2}
@@ -361,9 +344,9 @@ function BookTickets() {
                         type="button"
                         variant="contained"
                         onClick={handlePayNowClick}
-                        sx={{ mt: 3, mb: 8, bgcolor: "#cb0d0d" }}
+                        sx={{ mt: 1, mb: 8, bgcolor: "#cb0d0d" }}
                       >
-                        Pay: {selectedSeats.length  * selectedMovie[0].price}
+                        Pay: {selectedSeats.length * selectedMovie[0].price}
                       </Button>
                     </Grid>
                   </Grid>
@@ -374,6 +357,7 @@ function BookTickets() {
         )}
 
         {success && (
+          <>
           <Dialog open={isDialogOpen} onClose={handleCloseDialog}>
             <DialogTitle>Booking Summary</DialogTitle>
             <DialogContent>
@@ -383,10 +367,10 @@ function BookTickets() {
                     {bookingDetails.moviename}
                   </Typography>
                   <Typography variant="body1">
-                    {bookingDetails.seatnumber.join(", ")}
+                    {bookingDetails.seatnumbers}
                   </Typography>
                   <Typography variant="body1">
-                    Total: Rs. {bookingDetails.total}
+                    Total: Rs. {bookingDetails.price}
                   </Typography>
                 </>
               )}
@@ -397,6 +381,8 @@ function BookTickets() {
               </Button>
             </DialogActions>
           </Dialog>
+          <p>Booking successful!</p>
+          </>
         )}
       </Grid>
     </div>

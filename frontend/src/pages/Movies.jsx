@@ -54,19 +54,19 @@ const Movies = () => {
     setShowUpcomingMovies(false);
   };
 
-  const filteredMovies = moviesData.filter((movie) => {
-    const releaseDate = new Date(movie.releaseDate);
-    const currentDate = new Date();
-    return releaseDate <= currentDate;
-  });
+  // const filteredMovies = moviesData.filter((movie) => {
+  //   const releaseDate = new Date(movie.releaseDate);
+  //   const currentDate = new Date();
+  //   return releaseDate <= currentDate;
+  // });
 
-  // const filteredMovies =
-  //   selectedGenres.length === 0
-  //     ? moviesData
-  //     : moviesData.filter((movie) => {
-  //         const movieGenres = movie.genre.split("/");
-  //         return selectedGenres.some((genre) => movieGenres.includes(genre));
-  //       });
+  const filteredMovies =
+    selectedGenres.length === 0
+      ? moviesData
+      : moviesData.filter((movie) => {
+          const movieGenres = movie.genre.split("/");
+          return selectedGenres.some((genre) => movieGenres.includes(genre));
+        });
       
 
   const allGenres = moviesData.reduce((genres, movie) => {

@@ -47,6 +47,11 @@ const UpdateMovie = () => {
       console.error("Error fetching movies: ", error);
     }
   };
+  
+  const handleMovieChange = (event) => {
+    setMoviename(event.target.value);
+  };
+
 
   const handleUpdateClick = async () => {
     console.log(successResponse);
@@ -87,31 +92,39 @@ const UpdateMovie = () => {
         </Typography>
         <Grid container spacing={2}>
             <Grid item xs={12}>
-              <TextField
-                required
-                fullWidth
-                id="moviename"
-                label="Movie Name"
-                name="moviename"
-                value={moviename}
-                onChange={(e) => setMoviename(e.target.value)}
-                InputLabelProps={{ style: { color: "#ffffff" } }}
-                InputProps={{
-                  style: { color: "#ffffff" },
-                  classes: {
-                    root: {
-                      "& .MuiOutlinedInput-root": {
-                        "& fieldset": {
-                          borderColor: "#cb0d0d",
-                        },
-                        "&:hover fieldset": {
-                          borderColor: "#ffffff",
-                        },
-                      },
-                    },
-                  },
-                }}
-              />
+            <FormControl fullWidth sx={{ mt: 3, color: "red" }}>
+          <Select
+            value={selectedMovie}
+            onChange={handleMovieChange}
+            displayEmpty
+            inputProps={{ "aria-label": "Select Movie" }}
+            sx={{
+              color: "white",
+              "& .MuiSelect-root": { color: "#ffffff" },
+              "& .MuiInputBase-input": {
+                "&:focus": { borderRadius: 4 },
+              },
+              "& .MuiOutlinedInput-root": {
+                "& fieldset": {
+                  borderColor: "#cb0d0d",
+                },
+                "&:hover fieldset": {
+                  borderColor: "#ffffff",
+                },
+              },
+            }}
+          >
+            <MenuItem value="" disabled>
+              Select Movie
+            </MenuItem>
+            {movies.map((movie) => (
+              <MenuItem key={movie.moviename} value={movie.moviename}>
+              {movie.moviename}
+            </MenuItem>
+            ))}
+              
+          </Select>
+        </FormControl>
             </Grid>
           </Grid>
 
