@@ -12,6 +12,7 @@ import {
   DialogContent,
   DialogActions,
 } from "@mui/material";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
 import SeatIcon from "@mui/icons-material/EventSeat";
 import SeatSelectedIcon from "@mui/icons-material/EventSeatOutlined";
 import { styled } from "@mui/system";
@@ -45,12 +46,50 @@ import { selectClasses } from "@mui/base";
 //   transition: "background-color 0.3s ease",
 // }));
 
+function CustomizedTextField(props) {
+  return (
+    <TextField
+      {...props}
+      sx={{
+        "& .MuiInputBase-root": {
+          color: "#ffffff",
+        },
+        "& .MuiInputLabel-root": {
+          color: "#ffffff",
+        },
+        "& .MuiOutlinedInput-root": {
+          "& fieldset": {
+            borderColor: "#cb0d0d",
+          },
+          "&:hover fieldset": {
+            borderColor: "#ffffff",
+          },
+        },
+        "& .MuiInputLabel-shrink": {
+          color: "#cb0d0d",
+        },
+      }}
+    />
+  );
+}
+
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: "#cb0d0d",
+    },
+    background: {
+      default: "#242424",
+    },
+  },
+});
+
 function BookTickets() {
-  // const classes = useStyles();
-  const [selectedMovie, setSelectedMovie] = useState("");
+ 
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [selectedMovie, setSelectedMovie] = useState(null);
   const [numSeats, setNumSeats] = useState(0);
   const [selectedSeats, setSelectedSeats] = useState([]);
-  const [seatNumbers, setSeatNumbers] = useState("");
   const [success, setSuccess] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -73,7 +112,7 @@ function BookTickets() {
       .then((response) => {
         setSelectedMovie(response.data);
         console.log(response.data);
-        console.log(selectedMovie[0]);
+        console.log("Selected Movie: ", selectedMovie[0]);
         console.log(selectedMovie[0].moviename);
       })
       .catch((error) => {
@@ -85,16 +124,12 @@ function BookTickets() {
     setNumSeats(event.target.value);
   };
 
-  const handleSeatNumbersChange = (event) => {
-    setSeatNumbers(event.target.value);
-  };
-
   const handleSeatClick = (row, column) => {
     setSelectedSeats((prevSelectedSeats) => {
-      const seat = `${row}${column}`;
-      if (prevSelectedSeats.includes(seat)) {
+      const seat = {row, column};
+      if (prevSelectedSeats.some((selectedSeat) => selectedSeat.row === row && selectedSeat.column === column)) {
         return prevSelectedSeats.filter(
-          (selectedSeats) => selectedSeats !== seat
+          (selectedSeat) => selectedSeat.row !== row || selectedSeat.column !== column
         );
       } else {
         return [...prevSelectedSeats, seat];
@@ -143,41 +178,51 @@ function BookTickets() {
     setIsDialogOpen(true);
   };
 
-  const handlePayNowClick = () => {
-    const seatNumberArray = selectedSeats.map((seat) => seat.number);
+  const handlePayNowClick = (e) => {
+    e.preventDefault();
+    const seatNumberArray = selectedSeats.map((seat) => seat.row + seat.column);
     const ticketDto = {
       moviename: selectedMovie[0].moviename,
       theatrename: selectedMovie[0].theatrename,
       noOfTickets: numSeats,
-      seatnumber: seatNumberAraay.join(", "),
+      seatnumber: seatNumberArray.join(", "),
     };
 
     const bookingSummary = {
       moviename: selectedMovie[0].moviename,
       seatnumbers: ticketDto.seatnumber,
-      price: numSeats * selectedMovie[0].price,
+      price: selectedSeats.length * selectedMovie[0].price,
     };
 
     axios
-    .post(
-      `http://localhost:9090/api/v1.0/moviebooking/${encodeURIComponent(
-        selectedMovie[0].moviename
-      )}/book`,
-      ticketDto,
-      {
-        headers: {
-          Authorization: successResponse,
-        },
-      }
-    )
-    .then((response) => {
-      setSuccess(true);
-      handleOpenDialog();
-    })
-    .catch((error) => {
-      console.error("Error booking tickets", error);
-    });
- };
+      .post(
+        `http://localhost:9090/api/v1.0/moviebooking/${encodeURIComponent(
+          selectedMovie[0].moviename
+        )}/book`,
+        ticketDto,
+        {
+          headers: {
+            Authorization: successResponse,
+          },
+        }
+      )
+      .then((response) => {
+        setSuccess(true);
+        handleOpenDialog();
+        setBookingDetails(bookingSummary);
+      })
+      .catch((error) => {
+        if(error.response){
+          console.log(error.response.data);
+          console.log(error.response.status);
+          console.log(error.response.headers);
+        } else if(error.request){
+          console.log(error.request);
+        } else{
+          console.log("Error", error.message);
+        }
+      });
+  };
 
   const handleCloseDialog = () => {
     setIsDialogOpen(false);
@@ -193,8 +238,20 @@ function BookTickets() {
       <Grid container spacing={3} justifyContent="center">
         <Grid item xs={12}>
           <Typography variant="h6" align="center">
-          {selectedMovie[0].theatrename}
+            {selectedMovie[0].theatrename}
           </Typography>
+          <CustomizedTextField
+              margin="normal"
+              required
+              width="100px"
+              id="numSeats"
+              label="Select Seats"
+              name="numSeats"
+              value={numSeats}
+              onChange={handleNumSeatsChange}
+              autoFocus
+            />
+          
         </Grid>
 
         {rows.map((row) => (
@@ -257,9 +314,9 @@ function BookTickets() {
     );
   };
 
-  const handleBookTicketsClick = () => {
-    setShowForm(true);
-  };
+
+  const seatNumber = selectedSeats.map((seat) => seat.row + seat.column);
+  const seatNumberString = seatNumber.join(", ");
 
   return (
     <div>
@@ -272,86 +329,52 @@ function BookTickets() {
         {selectedMovie && (
           <Grid item xs={12} textAlign="center">
             <Typography variant="h4">{selectedMovie[0].moviename}</Typography>
-            <Grid container justifyContent="center" style={{ marginTop: "50px" }}>
-          {selectedMovie && (
-            <form onSubmit={handlePayNowClick}>
-              <Grid
-                container
-                spacing={2}
-                justifyContent="center"
-                alignItems="center"
-              >
-                <Grid item xs={12} textAlign="center">
-                  <Typography variant="h4">
-                    {selectedMovie[0].moviename}
-                  </Typography>
-                </Grid>
-
-                <Grid item xs={20}>
-                  {renderSeats()}
-                </Grid>
-                <Grid item xs={12} textAlign="center">
-                  <Typography variant="h6">
-                    Selected Seats: {selectedSeats.join(",")}
-                  </Typography>
-                </Grid>
-                <Grid item xs={12} textAlign="center">
-                  <Button
-                    type="submit"
-                    variant="contained"
-                    onClick={handlePayNowClick}
-                    sx={{ mt: 3, mb: 8, bgcolor: "#cb0d0d" }}
+            <Grid
+              container
+              justifyContent="center"
+              style={{ marginTop: "50px" }}
+            >
+              {selectedMovie && (
+                <form >
+                  <Grid
+                    container
+                    spacing={2}
+                    justifyContent="center"
+                    alignItems="center"
                   >
-                    Pay: {bookingDetails.total}
-                  </Button>
-                </Grid>
-              </Grid>
-            </form>
-          )}
-        </Grid>
+                    <Grid item xs={12} textAlign="center">
+                      <Typography variant="h4">
+                        {selectedMovie[0].moviename}
+                      </Typography>
+                    </Grid>
+
+                    <Grid item xs={20}>
+                      {renderSeats()}
+                    </Grid>
+                    <Grid item xs={12} textAlign="center">
+                      <Typography variant="h6">
+                        Selected Seats: {seatNumberString}
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={12} textAlign="center">
+                      <Button
+                        type="button"
+                        variant="contained"
+                        onClick={handlePayNowClick}
+                        sx={{ mt: 3, mb: 8, bgcolor: "#cb0d0d" }}
+                      >
+                        Pay: {selectedSeats.length  * selectedMovie[0].price}
+                      </Button>
+                    </Grid>
+                  </Grid>
+                </form>
+              )}
+            </Grid>
           </Grid>
         )}
 
-        {/* <Grid container justifyContent="center" style={{ marginTop: "50px" }}>
-          {showForm && selectedMovie && (
-            <form onSubmit={handleFormSubmit}>
-              <Grid
-                container
-                spacing={2}
-                justifyContent="center"
-                alignItems="center"
-              >
-                <Grid item xs={12} textAlign="center">
-                  <Typography variant="h4">
-                    {selectedMovie[0].moviename}
-                  </Typography>
-                </Grid>
-
-                <Grid item xs={20}>
-                  {renderSeats()}
-                </Grid>
-                <Grid item xs={12} textAlign="center">
-                  <Typography variant="h6">
-                    Selected Seats: {selectedSeats.join(",")}
-                  </Typography>
-                </Grid>
-                <Grid item xs={12} textAlign="center">
-                  <Button
-                    type="submit"
-                    variant="contained"
-                    onClick={handlePayNowClick}
-                    sx={{ mt: 3, mb: 8, bgcolor: "#cb0d0d" }}
-                  >
-                    Pay: {bookingDetails.total}
-                  </Button>
-                </Grid>
-              </Grid>
-            </form>
-          )}
-        </Grid> */}
-
         {success && (
-          <Dialog open={isDialogOpen} onClose={() => setIsDialogOpen(false)}>
+          <Dialog open={isDialogOpen} onClose={handleCloseDialog}>
             <DialogTitle>Booking Summary</DialogTitle>
             <DialogContent>
               {bookingDetails && (
@@ -369,8 +392,8 @@ function BookTickets() {
               )}
             </DialogContent>
             <DialogActions>
-              <Button onClick={() => setIsDialogOpen(false)} color="primary">
-                Close
+              <Button onClick={handleCloseDialog} color="primary">
+                Confirm Booking
               </Button>
             </DialogActions>
           </Dialog>

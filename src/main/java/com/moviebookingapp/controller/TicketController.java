@@ -41,7 +41,6 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @Slf4j
 @CrossOrigin(origins = { "http://localhost:5173", "http://127.0.0.1:5173" })
-
 public class TicketController {
 
 	private TicketService ticketService;

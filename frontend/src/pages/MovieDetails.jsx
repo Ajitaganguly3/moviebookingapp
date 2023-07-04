@@ -97,7 +97,7 @@ function BookTickets() {
             <img
               src={selectedMovie[0].posterURL}
               alt={selectedMovie[0].moviename}
-              style={{ width: "400px", height: "auto" }}
+              style={{ width: "400px", height: "auto" , marginBottom: "50px",}}
             />
           </div>
           <div style={{ justifyContent: "center" }}>
