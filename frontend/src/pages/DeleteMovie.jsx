@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import TextField from "@mui/material/TextField";
-import { useNavigate } from "react-router-dom";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
@@ -10,9 +8,6 @@ import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
-
-// Import the movie data from MovieData.jsx
-// import { moviesData } from "../components/MovieData";
 
 const theme = createTheme({
   palette: {
@@ -52,10 +47,10 @@ const DeleteMoviePage = () => {
 
   const handleMovieChange = (event) => {
     setMoviename(event.target.value);
+    setSelectedMovie(event.target.value);
   };
 
   const handleDeleteMovie = async () => {
-    // console.log(selectedMovie);
     console.log(successResponse);
 
     await axios
@@ -98,7 +93,7 @@ const DeleteMoviePage = () => {
         </Typography>
         <Grid container spacing={2}>
             <Grid item xs={12}>
-            <FormControl fullWidth sx={{ mt: 3, color: "red" }}>
+            <FormControl fullWidth sx={{ mt: 3 }}>
           <Select
             value={selectedMovie}
             onChange={handleMovieChange}
@@ -116,6 +111,9 @@ const DeleteMoviePage = () => {
                 },
                 "&:hover fieldset": {
                   borderColor: "#ffffff",
+                },
+                "& .Mui-focused": {
+                  borderColor: "#cb0d0d",
                 },
               },
             }}
@@ -155,39 +153,3 @@ const DeleteMoviePage = () => {
 };
 
 export default DeleteMoviePage;
-
-{
-  /* <FormControl fullWidth sx={{ mt: 3, color: "red" }}>
-          <Select
-            value={selectedMovie}
-            onChange={handleMovieChange}
-            displayEmpty
-            inputProps={{ "aria-label": "Select Movie" }}
-            sx={{
-              color: "white",
-              "& .MuiSelect-root": { color: "#ffffff" },
-              "& .MuiInputBase-input": {
-                "&:focus": { borderRadius: 4 },
-              },
-              "& .MuiOutlinedInput-root": {
-                "& fieldset": {
-                  borderColor: "#cb0d0d",
-                },
-                "&:hover fieldset": {
-                  borderColor: "#ffffff",
-                },
-              },
-            }}
-          >
-            <MenuItem value="" disabled>
-              Select Movie
-            </MenuItem>
-            {movies.map((movie) => (
-              <MenuItem key={movie.moviename} value={movie.moviename}>
-              {movie.moviename}
-            </MenuItem>
-            ))}
-              
-          </Select>
-        </FormControl> */
-}

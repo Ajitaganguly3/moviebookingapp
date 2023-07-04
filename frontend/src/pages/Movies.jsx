@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Box, Grid, Typography, Chip } from "@mui/material";
-// import { moviesData } from "../components/MovieData";
 import { Link } from "react-router-dom";
 
 const Movies = () => {
@@ -9,7 +8,6 @@ const Movies = () => {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [moviesData, setMoviesData] = useState([]);
   const [showUpcomingMovies, setShowUpcomingMovies] = useState(false);
-  const [selectedMovie, setSelectedMovie] = useState(null);
   const successResponse = localStorage.getItem("successResponse");
 
   useEffect(() => {
@@ -53,12 +51,6 @@ const Movies = () => {
   const handleNowShowingClick = () => {
     setShowUpcomingMovies(false);
   };
-
-  // const filteredMovies = moviesData.filter((movie) => {
-  //   const releaseDate = new Date(movie.releaseDate);
-  //   const currentDate = new Date();
-  //   return releaseDate <= currentDate;
-  // });
 
   const filteredMovies =
     selectedGenres.length === 0

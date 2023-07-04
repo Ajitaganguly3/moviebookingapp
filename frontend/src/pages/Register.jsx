@@ -55,10 +55,6 @@ const theme = createTheme({
   },
 });
 
-
-
-// const BASE_URL = "http://localhost:9090/api/v1.0/moviebooking/"
-
 export default function SignUp() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -73,9 +69,7 @@ export default function SignUp() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    
-    // const formData = new FormData(event.currentTarget);
-
+  
     const payload = {
       firstName : firstName,
       lastName : lastName,
@@ -98,8 +92,7 @@ export default function SignUp() {
        setPassword('');
        setConfirmPassword('');
        setRole('');
-      //  alert("User registered successfully");
-
+  
        navigate("/login");
     })
     .catch((error) =>{

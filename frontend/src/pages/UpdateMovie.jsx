@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import TextField from "@mui/material/TextField";
-import { useNavigate } from "react-router-dom";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
@@ -47,9 +45,10 @@ const UpdateMovie = () => {
       console.error("Error fetching movies: ", error);
     }
   };
-  
+
   const handleMovieChange = (event) => {
     setMoviename(event.target.value);
+    setSelectedMovie(event.target.value);
   };
 
 

@@ -2,13 +2,9 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import {useNavigate} from "react-router-dom";
 import { useParams } from "react-router-dom";
-import { moviesData } from "../components/MovieData";
 
 function BookTickets() {
   const [selectedMovie, setSelectedMovie] = useState("");
-  const [numSeats, setNumSeats] = useState(0);
-  const [seatNumbers, setSeatNumbers] = useState("");
-  const [success, setSuccess] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const successResponse = localStorage.getItem("successResponse");
   const { moviename } = useParams();
@@ -53,36 +49,6 @@ function BookTickets() {
     setSeatNumbers(event.target.value);
   };
 
-  // const handleFormSubmit = (event) => {
-  //   event.preventDefault();
-  //   // Validate form fields
-  //   if (selectedMovie && numSeats > 0 && seatNumbers.trim() !== "") {
-  //     const ticketDto = {
-  //       moviename: selectedMovie[0].moviename,
-  //       theatrename: selectedMovie[0].theatrename,
-  //       noOfTickets: numSeats,
-  //       seatnumber: seatNumbers.split(",").map((seat) => seat.trim()),
-  //     };
-
-  //     axios
-  //       .post(
-  //         `http://localhost:9090/api/v1.0/moviebooking/${encodeURIComponent(selectedMovie[0].moviename)}/book`,
-  //         ticketDto,
-  //         {
-  //           headers: {
-  //             Authorization: successResponse,
-  //           },
-  //         }
-  //       )
-  //       .then((response) => {
-  //         setSuccess(true);
-  //       })
-  //       .catch((error) => {
-  //         console.error("Error booking tickets", error);
-  //       });
-  //   }
-  // };
-
   const handleBookTicketsClick = () => {
     // setShowForm(true);
     navigate(`/movies/${moviename}/bookTickets`);
@@ -97,7 +63,7 @@ function BookTickets() {
             <img
               src={selectedMovie[0].posterURL}
               alt={selectedMovie[0].moviename}
-              style={{ width: "400px", height: "auto" , marginBottom: "50px",}}
+              style={{ width: "270px", height: "auto" , marginBottom: "50px",}}
             />
           </div>
           <div style={{ justifyContent: "center" }}>

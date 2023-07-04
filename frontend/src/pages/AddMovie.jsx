@@ -9,8 +9,6 @@ import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
 import { Box } from "@mui/material";
 
-// const movie =axios.create
-
 const theme = createTheme({
   palette: {
     primary: {

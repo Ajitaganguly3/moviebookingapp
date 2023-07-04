@@ -9,7 +9,7 @@ import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
 import { MenuItem, Menu, TextField, Autocomplete } from "@mui/material";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-// import { moviesData } from "./MovieData";
+
 
 export default function NavBar() {
   const [navOpen, setNavOpen] = useState(null);
@@ -23,7 +23,6 @@ export default function NavBar() {
   const location = useLocation();
   const successResponse = localStorage.getItem("successResponse");
 
-  //  const userRole = location.state ? location.state.role : "";
 
   const toggleNav = (event) => {
     setNavOpen(event.currentTarget);
@@ -44,7 +43,6 @@ export default function NavBar() {
         if (userRole === "Admin") { 
           return [
             { label: "Movies", path: "/movies" },
-            { label: "Book Tickets", path: "/bookTickets" },
             { label: "Add Movie", path: "/addMovie" },
             { label: "Update Movie", path: "/updateMovie" },
             { label: "Delete Movie", path: "/deleteMovie" },
@@ -53,7 +51,6 @@ export default function NavBar() {
         } else if (userRole === "User") {
           return [
             { label: "Movies", path: "/movies" },
-            { label: "Book Tickets", path: "/bookTickets" },
             { label: "Logout", path: "/" },
           ];
         } else {
@@ -88,20 +85,20 @@ export default function NavBar() {
       setSearchOptions(results.map((movie) => movie.moviename));
       setSearchResults(results);
       console.log("Search results:", results);
+
+      if (event.key === "Enter" && searchOptions.includes(value)) {
+        const selectedMovie = searchResults.find(
+          (movie) => movie.moviename.toLowerCase() === value.toLowerCase()
+        );
+        const movieId = selectedMovie.id;
+        navigate(`/movies/${selectedMovie.moviename}/movieDetails`);
+        console.log(selectedMovie.moviename);
+      }
     } else {
       setSearchOptions([]);
       setSearchResults([]);
     }
-
-    // Redirect to BookTickets page when a movie is selected
-    if (event.key === "Enter" && searchOptions.includes(value)) {
-      const selectedMovie = searchResults.find(
-        (movie) => movie.moviename.toLowerCase() === value.toLowerCase()
-      );
-      const movieId = selectedMovie.id;
-      navigate(`/movies/${selectedMovie.moviename}/bookTickets`);
-      console.log(selectedMovie.moviename);
-    }
+    
   };
 
   const fetchMoviesData = async () => {

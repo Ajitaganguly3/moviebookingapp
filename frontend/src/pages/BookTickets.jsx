@@ -13,38 +13,7 @@ import {
   DialogActions,
 } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import SeatIcon from "@mui/icons-material/EventSeat";
-import SeatSelectedIcon from "@mui/icons-material/EventSeatOutlined";
-import { styled } from "@mui/system";
 import { useParams } from "react-router-dom";
-import { selectClasses } from "@mui/base";
-// import { moviesData } from "../components/MovieData";
-
-// const SeatBox = styled(Box)(({ theme }) => ({
-//   width: "40px",
-//   height: "40px",
-//   display: "flex",
-//   justifyContent: "center",
-//   alignItems: "center",
-//   border: "1px solid black",
-//   cursor: "pointer",
-//   transition: "background-color 0.3s ease",
-// }));
-
-// const SelectedSeatBox = styled(Box)(({ theme }) => ({
-//   backgroundColor: "#8e0909",
-// }));
-
-// const ColumnSeatBox = styled(Box)(({ theme }) => ({
-//   width: "50px",
-//   height: "50px",
-//   display: "flex",
-//   justifyContent: "center",
-//   alignItems: "center",
-//   border: "1px solid black",
-//   cursor: "pointer",
-//   transition: "background-color 0.3s ease",
-// }));
 
 function CustomizedTextField(props) {
   return (
@@ -126,19 +95,24 @@ function BookTickets() {
   const handleSeatClick = (row, column) => {
     setSelectedSeats((prevSelectedSeats) => {
       const seat = { row, column };
-      if (
-        prevSelectedSeats.some(
-          (selectedSeat) =>
-            selectedSeat.row === row && selectedSeat.column === column
-        )
-      ) {
-        return prevSelectedSeats.filter(
-          (selectedSeat) =>
-            selectedSeat.row !== row || selectedSeat.column !== column
-        );
-      } else {
-        return [...prevSelectedSeats, seat];
+      const selectedSeatsCount = prevSelectedSeats.length;
+
+      if(selectedSeatsCount < numSeats) {
+        if (
+          prevSelectedSeats.some(
+            (selectedSeat) =>
+              selectedSeat.row === row && selectedSeat.column === column
+          )
+        ) {
+          return prevSelectedSeats.filter(
+            (selectedSeat) =>
+              selectedSeat.row !== row || selectedSeat.column !== column
+          );
+        } else {
+          return [...prevSelectedSeats, seat];
+        }
       }
+      return prevSelectedSeats;
     });
   };
   const isSeatSelected = (row, column) => {
@@ -220,6 +194,7 @@ function BookTickets() {
     ];
 
     return (
+      
       <Grid container spacing={3} justifyContent="center">
         <Grid item xs={12}>
           <Typography variant="h6" align="center">
@@ -302,6 +277,7 @@ function BookTickets() {
   const seatNumberString = seatNumber.join(", ");
 
   return (
+    <ThemeProvider theme={theme}>
     <div>
       <Grid
         container
@@ -386,6 +362,7 @@ function BookTickets() {
         )}
       </Grid>
     </div>
+    </ThemeProvider>
   );
 }
 
